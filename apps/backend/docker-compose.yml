@@ -1,0 +1,23 @@
+name: avo-backend
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: avo-postgres-new
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: avo-new
+      POSTGRES_PASSWORD: avo-new
+      POSTGRES_DB: avo-new
+    ports:
+      - "5432:5432"
+    volumes:
+      - avo-db-new:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U avo-new -d avo-new"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  avo-db-new:

@@ -1,0 +1,26 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["--cwd", "apps/web", "run", "dev"],
+      "port": 3000,
+      "autoPort": false
+    },
+    {
+      "name": "admin",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["--cwd", "apps/admin", "run", "dev"],
+      "port": 3001,
+      "autoPort": false
+    },
+    {
+      "name": "backend",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd apps/backend && bun run --hot src/server.ts"],
+      "port": 4000,
+      "autoPort": false
+    }
+  ]
+}
