@@ -35,6 +35,7 @@
     "dev": "bun --filter '*' dev",
     "dev:admin": "bun --filter @avo/admin dev",
     "dev:web": "bun --filter @avo/web dev",
+    "dev:public": "bun --filter @avo/public dev",
     "dev:backend": "bun --filter @avo/backend dev",
     "build": "bun --filter '*' build",
     "lint": "bun x ultracite fix",
