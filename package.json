@@ -34,7 +34,7 @@
   "scripts": {
     "dev": "bun --filter '*' dev",
     "dev:admin": "bun --filter @avo/admin dev",
-    "dev:web": "bun --filter @avo/web dev",
+    "dev:dashboard": "bun --filter @avo/dashboard dev",
     "dev:public": "bun --filter @avo/public dev",
     "dev:backend": "bun --filter @avo/backend dev",
     "build": "bun --filter '*' build",

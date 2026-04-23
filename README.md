@@ -8,13 +8,13 @@ Bun monorepo. Three apps, one shared UI package, one source of truth for every d
 avo/
 ├── apps/
 │   ├── admin/      @avo/admin    — Next.js 16 (port 3001)
-│   ├── web/        @avo/web      — Next.js 16 (port 3000)
+│   ├── dashboard/  @avo/dashboard — Next.js 16 (port 3000)
 │   └── backend/    @avo/backend  — Hono + Bun (port 4000)
 └── packages/
     └── ui/         @avo/ui       — shared shadcn components + cn/utils
 ```
 
-`@avo/web` and `@avo/admin` import UI from `@avo/ui` and types from `@avo/backend/types` (Hono RPC).
+`@avo/dashboard` and `@avo/admin` import UI from `@avo/ui` and types from `@avo/backend/types` (Hono RPC).
 
 ## Prerequisites
 
@@ -79,5 +79,5 @@ Shared dev tooling (`@biomejs/biome`, `typescript`, `ultracite`, `lefthook`) liv
 
 ## Adding a new workspace dependency
 
-- Unique to one app → add it normally: `bun add <pkg> --filter @avo/web`.
+- Unique to one app → add it normally: `bun add <pkg> --filter @avo/dashboard`.
 - Shared across apps → add to the root `workspaces.catalog`, then reference as `"<pkg>": "catalog:"` in each workspace's `package.json`, then `bun install`.
