@@ -1,8 +1,12 @@
-import type {
-  PublicMenuData,
-  PublicMenuPromotion,
-} from "@/api/public-menu/types";
+import type { MenuPreviewData } from "@/api/menu/types";
 import type { LocalMenuEditorState } from "./menu-editor-state";
+
+// Reuse the dashboard's own Hono-inferred preview type as the canonical shape
+// for the iframe payload. The public menu uses its own (structurally identical)
+// type via the same backend serializer; the protocol carries `unknown` to keep
+// the apps decoupled.
+type PublicMenuData = MenuPreviewData;
+type PublicMenuPromotion = MenuPreviewData["menu"]["promotions"][number];
 
 function mapRow(
   row: LocalMenuEditorState["tabs"][number]["categories"][number]["rows"][number]

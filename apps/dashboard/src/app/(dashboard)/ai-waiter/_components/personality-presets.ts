@@ -1,16 +1,18 @@
-import { ChefHat, Crown, Martini, Sparkles, Utensils, Wine } from "lucide-react";
+import type { PersonalitySlug as PersonalitySlugType } from "@avo/menu/ai-waiter-settings";
+import {
+  ChefHat,
+  Crown,
+  Martini,
+  Sparkles,
+  Utensils,
+  Wine,
+} from "lucide-react";
 import type { ComponentType } from "react";
 
-export type PersonalitySlug =
-  | "natural"
-  | "casual"
-  | "formal"
-  | "bistro"
-  | "sommelier"
-  | "bartender";
+export type { PersonalitySlug } from "@avo/menu/ai-waiter-settings";
 
 export interface PersonalityPreset {
-  slug: PersonalitySlug;
+  slug: PersonalitySlugType;
   name: string;
   tagline: string;
   /** A one-sentence description of the kind of venue this fits. */
@@ -108,9 +110,9 @@ export const PERSONALITY_PRESETS: PersonalityPreset[] = [
   },
 ];
 
-export const DEFAULT_PERSONALITY: PersonalitySlug = "natural";
+export const DEFAULT_PERSONALITY: PersonalitySlugType = "natural";
 
-export function getPersonality(slug: PersonalitySlug): PersonalityPreset {
+export function getPersonality(slug: PersonalitySlugType): PersonalityPreset {
   return (
     PERSONALITY_PRESETS.find((p) => p.slug === slug) ?? PERSONALITY_PRESETS[0]
   );

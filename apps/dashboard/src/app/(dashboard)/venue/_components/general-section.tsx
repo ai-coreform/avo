@@ -65,7 +65,7 @@ export function GeneralSection({
               <FormDescription>
                 I tuoi menu saranno visibili su{" "}
                 <span className="font-medium text-foreground">
-                  avomenu.com/{slug || "..."}/nome-menu
+                  avomenu.com/m/{slug || "..."}/nome-menu
                 </span>
               </FormDescription>
               <FormMessage />

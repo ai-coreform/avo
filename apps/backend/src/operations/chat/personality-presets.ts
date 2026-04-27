@@ -1,23 +1,21 @@
 /**
- * Server-side mirror of the personality presets defined for the dashboard at
- * apps/dashboard/src/app/(dashboard)/ai-waiter/_components/personality-presets.ts
+ * Server-side personality registry — owns the prompt fragments that get
+ * injected into the system prompt. Slug union lives in `@avo/menu` so the
+ * dashboard form, the backend composer, and the venue JSONB schema all share
+ * one source of truth.
  *
- * Slugs and promptFragments MUST stay in sync with the dashboard registry.
- * Display name + tagline are kept here too so prompts can include them in
- * debug headers if useful, but only `slug` and `promptFragment` are load-bearing
- * for prompt composition.
+ * Display names + fragments are kept server-side because they're consumed
+ * exclusively in prompt composition; the dashboard has its own registry of
+ * presentation metadata (icons, taglines, voice samples) that doesn't need
+ * to ship to the backend.
  */
 
-export type PersonalitySlug =
-  | "natural"
-  | "casual"
-  | "formal"
-  | "bistro"
-  | "sommelier"
-  | "bartender";
+import type { PersonalitySlug as PersonalitySlugType } from "@avo/menu/ai-waiter-settings";
+
+export type { PersonalitySlug } from "@avo/menu/ai-waiter-settings";
 
 export interface PersonalityPreset {
-  slug: PersonalitySlug;
+  slug: PersonalitySlugType;
   name: string;
   promptFragment: string;
 }
@@ -61,7 +59,7 @@ export const PERSONALITY_PRESETS: readonly PersonalityPreset[] = [
   },
 ] as const;
 
-export const DEFAULT_PERSONALITY: PersonalitySlug = "natural";
+export const DEFAULT_PERSONALITY: PersonalitySlugType = "natural";
 
 export function getPersonality(slug: string | undefined): PersonalityPreset {
   return (

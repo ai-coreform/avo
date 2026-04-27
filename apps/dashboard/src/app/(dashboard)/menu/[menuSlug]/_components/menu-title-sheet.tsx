@@ -97,7 +97,6 @@ export function MenuTitleSheet({
   });
 
   // Reset form when the sheet opens with new data (defaultValues changes).
-  // biome-ignore lint/correctness/useExhaustiveDependencies: form.reset is stable — intentionally omitted to avoid spurious resets during editing.
   useEffect(() => {
     form.reset(defaultValues);
     setActiveLocale(MENU_EDITOR_SOURCE_LOCALE);

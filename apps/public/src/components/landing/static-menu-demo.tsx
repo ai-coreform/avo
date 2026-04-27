@@ -1,5 +1,7 @@
 "use client";
 
+import type { MenuTheme } from "@avo/menu/menu-theme";
+import { getFontFamily, THEME_PRESETS, themeToCSS } from "@avo/menu/menu-theme";
 import { Badge } from "@avo/ui/components/ui/badge";
 import { Button } from "@avo/ui/components/ui/button";
 import {
@@ -29,13 +31,6 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Search } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import type { MenuTheme } from "@/lib/menu-theme";
-import {
-  getFontFamily,
-  MenuThemeProvider,
-  THEME_PRESETS,
-  themeToCSS,
-} from "@/lib/menu-theme";
 import type { MenuItem } from "@/types/menu";
 
 /* ─── Dummy data ─── */
@@ -45,7 +40,6 @@ const DEMO_THEME: MenuTheme = {
   logoSize: 32,
   fontDisplay: "bricolage-grotesque",
   fontBody: "dm-sans",
-  logoUrl: null,
 };
 
 type Section = "promos" | "mangiare" | "bere";
@@ -659,159 +653,156 @@ export function StaticMenuDemo({ height }: { height?: number }) {
   };
 
   return (
-    <MenuThemeProvider value={DEMO_THEME}>
-      <div
-        className="flex flex-col"
-        data-menu-demo
-        style={{
-          ...themeCSS,
-          backgroundColor: "#ffffff",
-          width: 390,
-          height: height ?? 680,
-        }}
-      >
-        <style>{`
+    <div
+      className="flex flex-col"
+      data-menu-demo
+      style={{
+        ...themeCSS,
+        backgroundColor: "#ffffff",
+        width: 390,
+        height: height ?? 680,
+      }}
+    >
+      <style>{`
           [data-menu-demo] .font-display { font-family: ${getFontFamily(DEMO_THEME.fontDisplay)} !important; }
           [data-menu-demo] .font-sans { font-family: ${getFontFamily(DEMO_THEME.fontBody)} !important; }
         `}</style>
 
-        {/* ── Fixed header + tabs (sticky top) ── */}
-        <div className="shrink-0" style={{ backgroundColor: "#ffffff" }}>
-          {/* Header (mirrors MenuHeader) */}
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center">
-              <Image
-                alt="Logo"
-                className="object-contain"
-                height={32}
-                src="/images/default-logo.svg"
-                style={{ height: 32, width: "auto" }}
-                width={80}
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <Button className="h-6 w-6 p-0" size="icon" variant="ghost">
-                <Search
-                  className="size-6"
-                  style={{ color: "var(--menu-text)" }}
-                />
-              </Button>
-              <Button
-                className="h-8 w-8 p-0 text-xl leading-none"
-                size="icon"
-                variant="ghost"
-              >
-                🇮🇹
-              </Button>
-            </div>
+      {/* ── Fixed header + tabs (sticky top) ── */}
+      <div className="shrink-0" style={{ backgroundColor: "#ffffff" }}>
+        {/* Header (mirrors MenuHeader) */}
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center">
+            <Image
+              alt="Logo"
+              className="object-contain"
+              height={32}
+              src="/images/default-logo.svg"
+              style={{ height: 32, width: "auto" }}
+              width={80}
+            />
           </div>
-
-          {/* Section tabs (mirrors DigitalMenu — with Promos) */}
-          <div
-            className="border-b"
-            style={{ borderColor: "var(--menu-border, var(--menu-accent))" }}
-          >
-            <div className="flex items-center px-4 pt-4">
-              {sections.map((section) => {
-                const isActive = activeSection === section.key;
-                const isPromo = section.key === "promos";
-                return (
-                  <button
-                    className="flex-1 cursor-pointer pb-2 font-bold text-xl tracking-tight transition-colors"
-                    key={section.key}
-                    onClick={() => handleSectionChange(section.key)}
-                    style={{
-                      fontFamily: "var(--menu-font-display)",
-                      color:
-                        isActive && isPromo ? undefined : "var(--menu-text)",
-                      opacity: isActive ? 1 : 0.4,
-                    }}
-                    type="button"
-                  >
-                    <span
-                      className="relative inline-block"
-                      style={
-                        isActive && isPromo
-                          ? {
-                              backgroundImage: "var(--menu-promo-gradient)",
-                              WebkitBackgroundClip: "text",
-                              WebkitTextFillColor: "transparent",
-                            }
-                          : undefined
-                      }
-                    >
-                      {section.label}
-                      {isActive && (
-                        <div
-                          className="absolute right-0 -bottom-2 left-0 h-0.5 rounded-full"
-                          style={
-                            isPromo
-                              ? {
-                                  backgroundImage: "var(--menu-promo-gradient)",
-                                }
-                              : { backgroundColor: "var(--menu-primary)" }
-                          }
-                        />
-                      )}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Sub-category pills (only for mangiare/bere) */}
-            {activeSection !== "promos" && (
-              <div
-                className="scrollbar-hide overflow-x-auto border-t py-2"
-                style={{
-                  borderColor: "var(--menu-border, var(--menu-accent))",
-                }}
-              >
-                <div className="flex w-max min-w-full gap-2 px-4">
-                  {currentCategories.map((category) => {
-                    const isActive = activeCategory === category.slug;
-                    return (
-                      <button
-                        className="flex-shrink-0 cursor-pointer whitespace-nowrap rounded-sm px-4 py-2 font-medium text-base transition-colors"
-                        key={category.id}
-                        onClick={() => setActiveCategory(category.slug)}
-                        style={{
-                          fontFamily: "var(--menu-font-display)",
-                          backgroundColor: isActive
-                            ? "var(--menu-primary)"
-                            : "var(--menu-tab-bg, var(--menu-accent))",
-                          color: isActive
-                            ? "var(--menu-tab-active-text, #fff)"
-                            : "var(--menu-tab-text, var(--menu-text))",
-                          opacity: isActive ? 1 : 0.6,
-                        }}
-                        type="button"
-                      >
-                        {category.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+          <div className="flex items-center gap-3">
+            <Button className="h-6 w-6 p-0" size="icon" variant="ghost">
+              <Search
+                className="size-6"
+                style={{ color: "var(--menu-text)" }}
+              />
+            </Button>
+            <Button
+              className="h-8 w-8 p-0 text-xl leading-none"
+              size="icon"
+              variant="ghost"
+            >
+              🇮🇹
+            </Button>
           </div>
         </div>
 
-        {/* ── Scrollable content ── */}
-        <div className="scrollbar-hide flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="px-4 pb-8">
-            {activeSection === "promos" ? (
-              <div className="space-y-4 pt-5">
-                {DEMO_PROMOS.map((promo) => (
-                  <StaticPromoCard key={promo.id} promo={promo} />
-                ))}
-              </div>
-            ) : (
-              <StaticMenuList groups={currentGroups} />
-            )}
+        {/* Section tabs (mirrors DigitalMenu — with Promos) */}
+        <div
+          className="border-b"
+          style={{ borderColor: "var(--menu-border, var(--menu-accent))" }}
+        >
+          <div className="flex items-center px-4 pt-4">
+            {sections.map((section) => {
+              const isActive = activeSection === section.key;
+              const isPromo = section.key === "promos";
+              return (
+                <button
+                  className="flex-1 cursor-pointer pb-2 font-bold text-xl tracking-tight transition-colors"
+                  key={section.key}
+                  onClick={() => handleSectionChange(section.key)}
+                  style={{
+                    fontFamily: "var(--menu-font-display)",
+                    color: isActive && isPromo ? undefined : "var(--menu-text)",
+                    opacity: isActive ? 1 : 0.4,
+                  }}
+                  type="button"
+                >
+                  <span
+                    className="relative inline-block"
+                    style={
+                      isActive && isPromo
+                        ? {
+                            backgroundImage: "var(--menu-promo-gradient)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                          }
+                        : undefined
+                    }
+                  >
+                    {section.label}
+                    {isActive && (
+                      <div
+                        className="absolute right-0 -bottom-2 left-0 h-0.5 rounded-full"
+                        style={
+                          isPromo
+                            ? {
+                                backgroundImage: "var(--menu-promo-gradient)",
+                              }
+                            : { backgroundColor: "var(--menu-primary)" }
+                        }
+                      />
+                    )}
+                  </span>
+                </button>
+              );
+            })}
           </div>
+
+          {/* Sub-category pills (only for mangiare/bere) */}
+          {activeSection !== "promos" && (
+            <div
+              className="scrollbar-hide overflow-x-auto border-t py-2"
+              style={{
+                borderColor: "var(--menu-border, var(--menu-accent))",
+              }}
+            >
+              <div className="flex w-max min-w-full gap-2 px-4">
+                {currentCategories.map((category) => {
+                  const isActive = activeCategory === category.slug;
+                  return (
+                    <button
+                      className="flex-shrink-0 cursor-pointer whitespace-nowrap rounded-sm px-4 py-2 font-medium text-base transition-colors"
+                      key={category.id}
+                      onClick={() => setActiveCategory(category.slug)}
+                      style={{
+                        fontFamily: "var(--menu-font-display)",
+                        backgroundColor: isActive
+                          ? "var(--menu-primary)"
+                          : "var(--menu-tab-bg, var(--menu-accent))",
+                        color: isActive
+                          ? "var(--menu-tab-active-text, #fff)"
+                          : "var(--menu-tab-text, var(--menu-text))",
+                        opacity: isActive ? 1 : 0.6,
+                      }}
+                      type="button"
+                    >
+                      {category.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </MenuThemeProvider>
+
+      {/* ── Scrollable content ── */}
+      <div className="scrollbar-hide flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="px-4 pb-8">
+          {activeSection === "promos" ? (
+            <div className="space-y-4 pt-5">
+              {DEMO_PROMOS.map((promo) => (
+                <StaticPromoCard key={promo.id} promo={promo} />
+              ))}
+            </div>
+          ) : (
+            <StaticMenuList groups={currentGroups} />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

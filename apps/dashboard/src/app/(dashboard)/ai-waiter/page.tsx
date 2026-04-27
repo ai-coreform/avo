@@ -1,8 +1,8 @@
 "use client";
 
+import { matchQueryStatus } from "@avo/ui/lib/match-query-status";
 import { useGetMenus } from "@/api/menu/use-get-menus";
 import { Main } from "@/components/layout/main";
-import { matchQueryStatus } from "@/lib/match-query-status";
 import { Empty, Errored, Loading, Success } from "./_components/query-states";
 
 function AiWaiterPage() {

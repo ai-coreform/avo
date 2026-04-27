@@ -35,6 +35,7 @@ import { useGetMenus } from "@/api/menu/use-get-menus";
 import { useGetVenue } from "@/api/venue/use-get-venue";
 import { VenueQrDialog } from "@/app/(dashboard)/menu/_components/venue-qr-dialog";
 import useSignOut from "@/hooks/use-sign-out";
+import { publicMenuUrl } from "@/lib/public-menu-url";
 import { useLayout } from "@/providers/layout-provider";
 import type { User } from "@/types/misc";
 import { UserAvatarProfile } from "../user-avatar-profile";
@@ -62,7 +63,7 @@ export default function AppSidebar({ user }: Props) {
     ? menus.find((m) => m.id === activeMenuId)
     : menus.find((m) => m.status === "published");
   const menuLiveUrl =
-    venueSlug && liveMenu ? `/m/${venueSlug}/${liveMenu.slug}` : null;
+    venueSlug && liveMenu ? publicMenuUrl(venueSlug, liveMenu.slug) : null;
 
   return (
     <Sidebar collapsible="icon">
@@ -139,8 +140,7 @@ export default function AppSidebar({ user }: Props) {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
-                      const fullUrl = `${window.location.origin}${menuLiveUrl}`;
-                      navigator.clipboard.writeText(fullUrl);
+                      navigator.clipboard.writeText(menuLiveUrl);
                       toast.success("Link copiato negli appunti");
                     }}
                   >

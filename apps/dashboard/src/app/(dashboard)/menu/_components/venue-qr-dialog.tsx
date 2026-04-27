@@ -10,11 +10,11 @@ import {
 } from "@avo/ui/components/ui/dialog";
 import { Input } from "@avo/ui/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@avo/ui/components/ui/tabs";
-import { Copy, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
 import { useCallback, useRef, useState } from "react";
-import { toast } from "sonner";
 import { API_BASE_URL } from "@/config/environment";
+import { publicMenuQrUrl } from "@/lib/public-menu-url";
 
 type LogoMode = "none" | "avo" | "venue";
 
@@ -23,14 +23,6 @@ interface VenueQrDialogProps {
   onOpenChange: (open: boolean) => void;
   venueSlug: string;
   venueLogo?: string | null;
-}
-
-function buildQrUrl(venueSlug: string) {
-  const origin =
-    typeof window !== "undefined"
-      ? window.location.origin
-      : "http://localhost:3000";
-  return `${origin}/qr/v/${venueSlug}`;
 }
 
 function resolveLogoUrl(logo: string | null | undefined): string | null {
@@ -100,6 +92,7 @@ function AvoIcon({
       viewBox="0 0 34 40"
       xmlns="http://www.w3.org/2000/svg"
     >
+      <title>Avo</title>
       <defs>
         <linearGradient
           gradientUnits="userSpaceOnUse"
@@ -138,7 +131,7 @@ export function VenueQrDialog({
 }: VenueQrDialogProps) {
   const svgContainerRef = useRef<HTMLDivElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
-  const qrUrl = buildQrUrl(venueSlug);
+  const qrUrl = publicMenuQrUrl(venueSlug);
   const resolvedVenueLogo = resolveLogoUrl(venueLogo);
   const hasVenueLogo = Boolean(resolvedVenueLogo);
 
@@ -179,11 +172,6 @@ export function VenueQrDialog({
     link.click();
   }, [venueSlug]);
 
-  const handleCopyLink = useCallback(() => {
-    navigator.clipboard.writeText(qrUrl);
-    toast.success("Link copiato negli appunti");
-  }, [qrUrl]);
-
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-md">
@@ -209,7 +197,11 @@ export function VenueQrDialog({
 
           {/* Color pickers */}
           <div className="flex items-center justify-center gap-3">
-            <ColorPicker label="Colore QR" onChange={setFgColor} value={fgColor} />
+            <ColorPicker
+              label="Colore QR"
+              onChange={setFgColor}
+              value={fgColor}
+            />
             <ColorPicker label="Sfondo" onChange={setBgColor} value={bgColor} />
             {logoMode === "avo" && (
               <ColorPicker

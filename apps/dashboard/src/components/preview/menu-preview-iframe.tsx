@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
-import type { PublicMenuData } from "@/api/public-menu/types";
+import type { MenuTheme } from "@avo/menu/menu-theme";
 import type {
   AiWaiterPreviewSettings,
   PreviewAiSettingsMessage,
@@ -9,8 +8,9 @@ import type {
   PreviewMenuMessage,
   PreviewTabChangeMessage,
   PreviewThemeMessage,
-} from "@/app/(public-menu)/m/[venueSlug]/[menuSlug]/_hooks/use-preview-mode";
-import type { MenuTheme } from "@/app/(public-menu)/m/[venueSlug]/[menuSlug]/_utils/menu-theme";
+} from "@avo/menu/preview-protocol";
+import { useCallback, useEffect, useRef } from "react";
+import { PUBLIC_MENU_ORIGIN } from "@/lib/public-menu-url";
 
 interface MenuPreviewIframeProps {
   venueSlug: string;
@@ -25,7 +25,7 @@ export function MenuPreviewIframe({
 }: MenuPreviewIframeProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const src = `/m/${venueSlug}/${menuSlug}?preview=true`;
+  const src = `${PUBLIC_MENU_ORIGIN}/m/${venueSlug}/${menuSlug}?preview=true`;
 
   return (
     <iframe
@@ -56,7 +56,7 @@ export function usePreviewMessenger() {
         "[data-preview-iframe]"
       );
       if (iframe?.contentWindow) {
-        iframe.contentWindow.postMessage(message, "*");
+        iframe.contentWindow.postMessage(message, PUBLIC_MENU_ORIGIN);
       }
     },
     []
@@ -70,7 +70,7 @@ export function usePreviewMessenger() {
   );
 
   const sendMenuData = useCallback(
-    (data: PublicMenuData) => {
+    (data: unknown) => {
       send({ type: "avo-preview:menu-update", data });
     },
     [send]
@@ -107,6 +107,20 @@ export function usePreviewMessenger() {
 }
 
 /**
+ * Validates incoming "ready" messages came from the public menu app's origin.
+ * The iframe sends `{ type: "avo-preview:ready" }` once it's mounted; we
+ * use that to (re)send the current theme/data/etc.
+ */
+function isReadyFromPublicMenu(event: MessageEvent): boolean {
+  return (
+    event.origin === PUBLIC_MENU_ORIGIN &&
+    !!event.data &&
+    typeof event.data === "object" &&
+    (event.data as { type?: unknown }).type === "avo-preview:ready"
+  );
+}
+
+/**
  * Hook that sends a theme update to the iframe whenever the theme changes.
  * Also listens for "avo-preview:ready" from the iframe and resends the current theme.
  */
@@ -123,12 +137,7 @@ export function useThemePreviewSync(theme: Partial<MenuTheme> | null) {
 
   useEffect(() => {
     const handleReady = (event: MessageEvent) => {
-      if (
-        event.data &&
-        typeof event.data === "object" &&
-        event.data.type === "avo-preview:ready" &&
-        themeRef.current
-      ) {
+      if (isReadyFromPublicMenu(event) && themeRef.current) {
         sendTheme(themeRef.current);
       }
     };
@@ -171,12 +180,7 @@ export function useAiSettingsPreviewSync(
 
   useEffect(() => {
     const handleReady = (event: MessageEvent) => {
-      if (
-        event.data &&
-        typeof event.data === "object" &&
-        event.data.type === "avo-preview:ready" &&
-        settingsRef.current
-      ) {
+      if (isReadyFromPublicMenu(event) && settingsRef.current) {
         sendAiSettings(settingsRef.current);
       }
     };
@@ -204,12 +208,7 @@ export function useChatOpenPreviewSync(open: boolean | null) {
 
   useEffect(() => {
     const handleReady = (event: MessageEvent) => {
-      if (
-        event.data &&
-        typeof event.data === "object" &&
-        event.data.type === "avo-preview:ready" &&
-        openRef.current !== null
-      ) {
+      if (isReadyFromPublicMenu(event) && openRef.current !== null) {
         sendChatOpen(openRef.current);
       }
     };
@@ -222,8 +221,13 @@ export function useChatOpenPreviewSync(open: boolean | null) {
 /**
  * Hook that sends a menu data update to the iframe whenever the data changes.
  * Also listens for "avo-preview:ready" from the iframe and resends the current data.
+ *
+ * `data` is typed as `unknown` because the dashboard fetches it from its own
+ * `menusApi.getPreview` (manage endpoint) but the public menu receives it via
+ * its own `PublicMenuData` type — both shapes are produced by the same backend
+ * `serializePublicMenu` so the runtime payload is identical.
  */
-export function useMenuDataPreviewSync(data: PublicMenuData | null) {
+export function useMenuDataPreviewSync(data: unknown | null) {
   const { sendMenuData } = usePreviewMessenger();
   const dataRef = useRef(data);
   dataRef.current = data;
@@ -236,12 +240,7 @@ export function useMenuDataPreviewSync(data: PublicMenuData | null) {
 
   useEffect(() => {
     const handleReady = (event: MessageEvent) => {
-      if (
-        event.data &&
-        typeof event.data === "object" &&
-        event.data.type === "avo-preview:ready" &&
-        dataRef.current
-      ) {
+      if (isReadyFromPublicMenu(event) && dataRef.current) {
         sendMenuData(dataRef.current);
       }
     };

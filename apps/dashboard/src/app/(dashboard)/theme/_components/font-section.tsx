@@ -1,3 +1,8 @@
+import {
+  FONT_OPTIONS,
+  getFontFamily,
+  type MenuTheme,
+} from "@avo/menu/menu-theme";
 import { Label } from "@avo/ui/components/ui/label";
 import {
   Select,
@@ -6,11 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@avo/ui/components/ui/select";
-import {
-  FONT_OPTIONS,
-  getFontFamily,
-  type MenuTheme,
-} from "@/app/(public-menu)/m/[venueSlug]/[menuSlug]/_utils/menu-theme";
 
 interface FontSectionProps {
   theme: MenuTheme;

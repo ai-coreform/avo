@@ -36,7 +36,8 @@ export function Empty() {
   return (
     <div className="flex items-center justify-center py-16">
       <p className="text-muted-foreground text-sm">
-        Nessun menu trovato. Crea un menu prima di configurare l&apos;assistente.
+        Nessun menu trovato. Crea un menu prima di configurare
+        l&apos;assistente.
       </p>
     </div>
   );

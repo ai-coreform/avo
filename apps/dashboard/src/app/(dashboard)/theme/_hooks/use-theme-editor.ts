@@ -1,15 +1,12 @@
 "use client";
 
+import { defaultMenuTheme, type MenuTheme } from "@avo/menu/menu-theme";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { menusApi } from "@/api/menu";
 import type { MenuListItem } from "@/api/menu/types";
 import { menusQueryKeys } from "@/api/menu/use-get-menus";
-import {
-  defaultMenuTheme,
-  type MenuTheme,
-} from "@/app/(public-menu)/m/[venueSlug]/[menuSlug]/_utils/menu-theme";
 
 interface UseThemeEditorOptions {
   menu: MenuListItem | null;

@@ -26,8 +26,8 @@ import { LookSection } from "./look-section";
 import { PersonalitySection } from "./personality-section";
 import { QuestionsSection } from "./questions-section";
 import {
-  aiWaiterFormSchema,
   type AiWaiterFormValues,
+  aiWaiterFormSchema,
   DEFAULT_FORM_VALUES,
   DEFAULT_WELCOME_QUESTIONS,
 } from "./types";
@@ -68,8 +68,9 @@ export function AiWaiterPageView({ data }: AiWaiterPageViewProps) {
     }
     form.reset({
       bgColor: savedAiSettings.bgColor ?? DEFAULT_FORM_VALUES.bgColor,
-      questions:
-        savedAiSettings.questions ?? [...DEFAULT_FORM_VALUES.questions],
+      questions: savedAiSettings.questions ?? [
+        ...DEFAULT_FORM_VALUES.questions,
+      ],
       personality:
         savedAiSettings.personality ?? DEFAULT_FORM_VALUES.personality,
     });
@@ -110,8 +111,9 @@ export function AiWaiterPageView({ data }: AiWaiterPageViewProps) {
     if (savedAiSettings) {
       form.reset({
         bgColor: savedAiSettings.bgColor ?? DEFAULT_FORM_VALUES.bgColor,
-        questions:
-          savedAiSettings.questions ?? [...DEFAULT_FORM_VALUES.questions],
+        questions: savedAiSettings.questions ?? [
+          ...DEFAULT_FORM_VALUES.questions,
+        ],
         personality:
           savedAiSettings.personality ?? DEFAULT_FORM_VALUES.personality,
       });
@@ -201,10 +203,7 @@ export function AiWaiterPageView({ data }: AiWaiterPageViewProps) {
 
           <Separator />
 
-          <QuestionsSection
-            control={form.control}
-            setValue={form.setValue}
-          />
+          <QuestionsSection control={form.control} setValue={form.setValue} />
 
           <Separator />
 

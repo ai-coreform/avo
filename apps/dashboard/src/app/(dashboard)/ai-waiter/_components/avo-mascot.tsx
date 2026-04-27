@@ -31,9 +31,10 @@ export function AvoMascot({
       style={{ width: size, height: size, backgroundColor: bgColor }}
     >
       <svg
-        aria-hidden
+        aria-label="Avo"
         fill="none"
         height={glyphSize}
+        role="img"
         viewBox="0 0 34 40"
         width={glyphSize}
         xmlns="http://www.w3.org/2000/svg"

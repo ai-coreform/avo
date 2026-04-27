@@ -82,7 +82,9 @@ export function LookSection({ control }: LookSectionProps) {
         {/* Right: standalone preview card with the FAB at real size */}
         <div className="flex flex-col items-center justify-center gap-3 rounded-xl border bg-muted/40 px-6 py-7">
           <FabPreview bgColor={bgColor} />
-          <p className="text-muted-foreground text-xs">Anteprima del pulsante</p>
+          <p className="text-muted-foreground text-xs">
+            Anteprima del pulsante
+          </p>
         </div>
       </div>
     </div>
@@ -110,7 +112,7 @@ function FabPreview({ bgColor }: { bgColor: string }) {
         />
       </div>
       <div
-        className="-top-0.5 -right-0.5 absolute flex size-7 items-center justify-center rounded-full border-2 border-background shadow-sm"
+        className="absolute -top-0.5 -right-0.5 flex size-7 items-center justify-center rounded-full border-2 border-background shadow-sm"
         style={{ backgroundColor: bgColor }}
       >
         <MessageSquare className="size-3.5 fill-white text-white" />

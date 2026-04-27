@@ -2,7 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { client } from "@/lib/api";
 import { authClient } from "@/lib/auth/client";
 import { InvitationCard } from "./_components/invitation-card";
@@ -18,7 +18,7 @@ interface Invitation {
   inviterEmail?: string;
 }
 
-export default function InvitiPage() {
+function InvitiPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: sessionData, isPending: isSessionPending } =
@@ -186,5 +186,13 @@ export default function InvitiPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function InvitiPage() {
+  return (
+    <Suspense fallback={null}>
+      <InvitiPageContent />
+    </Suspense>
   );
 }
