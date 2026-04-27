@@ -1,4 +1,4 @@
-import { THEME_PRESETS } from "@/app/(public-menu)/m/[venueSlug]/[menuSlug]/_utils/menu-theme";
+import { THEME_PRESETS } from "@avo/menu/menu-theme";
 
 interface PresetPalettesProps {
   currentTheme: Record<string, unknown>;

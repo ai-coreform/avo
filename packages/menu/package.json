@@ -1,0 +1,18 @@
+{
+  "name": "@avo/menu",
+  "version": "0.0.0",
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    "./menu-theme": "./src/menu-theme.ts",
+    "./preview-protocol": "./src/preview-protocol.ts",
+    "./ai-waiter-settings": "./src/ai-waiter-settings.ts"
+  },
+  "scripts": {
+    "type-check": "bunx tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}

@@ -1,8 +1,8 @@
 "use client";
 
+import { matchQueryStatus } from "@avo/ui/lib/match-query-status";
 import { useGetLocales } from "@/api/locales/use-get-locales";
 import { Main } from "@/components/layout/main";
-import { matchQueryStatus } from "@/lib/match-query-status";
 import { Empty, Errored, Loading, Success } from "./_components/query-states";
 
 function TranslationsPage() {

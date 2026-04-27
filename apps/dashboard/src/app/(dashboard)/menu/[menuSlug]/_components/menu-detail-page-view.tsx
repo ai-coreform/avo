@@ -1,7 +1,7 @@
 "use client";
 
+import { matchQueryStatus } from "@avo/ui/lib/match-query-status";
 import { useGetMenuEditor } from "@/api/menu/use-get-menu-editor";
-import { matchQueryStatus } from "@/lib/match-query-status";
 import { MenuEditorScreen } from "./menu-editor-screen";
 import { Empty, Errored, Loading } from "./query-states";
 

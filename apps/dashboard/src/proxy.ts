@@ -3,20 +3,11 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const DEFAULT_AUTHENTICATED_PATH = "/menu";
 const PROTECTED_PATH_PREFIXES = ["/"];
-const PUBLIC_PATH_PREFIXES = ["/m/"];
 const AUTH_COOKIE_PREFIX =
   process.env.BETTER_AUTH_COOKIE_PREFIX ??
   process.env.NEXT_PUBLIC_BETTER_AUTH_COOKIE_PREFIX;
 
-function isPublicPath(pathname: string) {
-  return PUBLIC_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-}
-
 function isProtectedPath(pathname: string) {
-  if (isPublicPath(pathname)) {
-    return false;
-  }
-
   if (pathname === "/") {
     return true;
   }

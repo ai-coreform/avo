@@ -1,22 +1,21 @@
 "use client";
 
+import {
+  LOGO_SIZE_MAX,
+  LOGO_SIZE_MIN,
+  LOGO_SIZE_STEP,
+} from "@avo/menu/menu-theme";
 import { Button } from "@avo/ui/components/ui/button";
 import { Separator } from "@avo/ui/components/ui/separator";
 import { Slider } from "@avo/ui/components/ui/slider";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Save, Undo2 } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState, useSyncExternalStore } from "react";
 import { menusApi } from "@/api/menu";
 import type { MenuListItem } from "@/api/menu/types";
 import { menusQueryKeys } from "@/api/menu/use-get-menus";
 import { useGetVenue } from "@/api/venue/use-get-venue";
 import { useUpdateVenue } from "@/api/venue/use-update-venue";
-import {
-  LOGO_SIZE_MAX,
-  LOGO_SIZE_MIN,
-  LOGO_SIZE_STEP,
-} from "@/app/(public-menu)/m/[venueSlug]/[menuSlug]/_utils/menu-theme";
 import { ImageUpload } from "@/components/image-upload";
 import {
   useMenuDataPreviewSync,
@@ -146,10 +145,13 @@ export function ThemeEditorView({
             value={venueLogo}
           />
           {venueLogo && (
-            <div className="flex-1 max-w-md space-y-2">
-              <label className="font-medium text-sm">Dimensione Logo</label>
+            <div className="max-w-md flex-1 space-y-2">
+              <label className="font-medium text-sm" htmlFor="logo-size-slider">
+                Dimensione Logo
+              </label>
               <div className="flex items-center gap-3">
                 <Slider
+                  id="logo-size-slider"
                   max={LOGO_SIZE_MAX}
                   min={LOGO_SIZE_MIN}
                   onValueChange={([val]) =>

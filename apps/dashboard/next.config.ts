@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     "@hugeicons/react",
     "@hugeicons/core-free-icons",
     "@avo/ui",
+    "@avo/menu",
   ],
   async rewrites() {
     return [

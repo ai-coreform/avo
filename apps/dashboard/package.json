@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@avo/backend": "workspace:*",
+    "@avo/menu": "workspace:*",
     "@avo/ui": "workspace:*",
     "@ai-sdk/react": "^3.0.161",
     "@dnd-kit/core": "^6.3.1",

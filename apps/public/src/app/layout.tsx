@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, DM_Sans, Figtree } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
-import { CookieBanner } from "@/components/cookie-banner";
-import { MetaPixel } from "@/components/meta-pixel";
+import { ReactQueryProvider } from "@/lib/react-query-provider";
 import { cn } from "@/lib/utils";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
@@ -64,9 +64,9 @@ export default function RootLayout({
   return (
     <html className={cn("font-sans", figtree.variable)} lang="it">
       <body className={`${bricolage.variable} ${dmSans.variable} antialiased`}>
-        {children}
-        <MetaPixel />
-        <CookieBanner />
+        <ReactQueryProvider>
+          <NuqsAdapter>{children}</NuqsAdapter>
+        </ReactQueryProvider>
       </body>
     </html>
   );

@@ -1,7 +1,4 @@
-import {
-  type MenuTheme,
-  PROMO_GRADIENT_PRESETS,
-} from "@/app/(public-menu)/m/[venueSlug]/[menuSlug]/_utils/menu-theme";
+import { type MenuTheme, PROMO_GRADIENT_PRESETS } from "@avo/menu/menu-theme";
 import { ColorPicker } from "./color-picker";
 
 interface ColorSchemeSectionProps {

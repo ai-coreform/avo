@@ -11,20 +11,14 @@ import { Input } from "@avo/ui/components/ui/input";
 import { RotateCcw } from "lucide-react";
 import type { Control, UseFormSetValue } from "react-hook-form";
 import { useWatch } from "react-hook-form";
-import {
-  DEFAULT_WELCOME_QUESTIONS,
-  type AiWaiterFormValues,
-} from "./types";
+import { type AiWaiterFormValues, DEFAULT_WELCOME_QUESTIONS } from "./types";
 
 interface QuestionsSectionProps {
   control: Control<AiWaiterFormValues>;
   setValue: UseFormSetValue<AiWaiterFormValues>;
 }
 
-export function QuestionsSection({
-  control,
-  setValue,
-}: QuestionsSectionProps) {
+export function QuestionsSection({ control, setValue }: QuestionsSectionProps) {
   const questions = useWatch({ control, name: "questions" });
 
   return (

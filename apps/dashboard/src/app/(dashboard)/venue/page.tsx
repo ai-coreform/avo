@@ -1,8 +1,8 @@
 "use client";
 
+import { matchQueryStatus } from "@avo/ui/lib/match-query-status";
 import { useGetVenue } from "@/api/venue/use-get-venue";
 import { Main } from "@/components/layout/main";
-import { matchQueryStatus } from "@/lib/match-query-status";
 import { Empty, Errored, Loading, Success } from "./_components/query-states";
 
 function VenuePage() {

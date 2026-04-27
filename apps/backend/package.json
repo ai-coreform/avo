@@ -43,6 +43,7 @@
     "fix": "ultracite fix"
   },
   "dependencies": {
+    "@avo/menu": "workspace:*",
     "@ai-sdk/openai": "^3.0.52",
     "@hono/zod-validator": "^0.7.5",
     "@openrouter/ai-sdk-provider": "^2.5.1",

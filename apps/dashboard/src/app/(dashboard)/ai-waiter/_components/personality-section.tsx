@@ -61,20 +61,24 @@ function PersonalityCard({
   const Icon = preset.icon;
 
   return (
-    <button
-      aria-checked={isSelected}
+    <label
       className={cn(
-        "group relative flex flex-col gap-3 rounded-xl border bg-card p-4 text-left transition-all",
+        "group relative flex cursor-pointer flex-col gap-3 rounded-xl border bg-card p-4 text-left transition-all",
         "hover:border-foreground/30 hover:bg-accent/30",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2",
+        "focus-within:outline-none focus-within:ring-2 focus-within:ring-ring/40 focus-within:ring-offset-2",
         isSelected
           ? "border-foreground/70 ring-1 ring-foreground/50"
           : "border-border"
       )}
-      onClick={onSelect}
-      role="radio"
-      type="button"
     >
+      <input
+        checked={isSelected}
+        className="sr-only"
+        name="ai-waiter-personality"
+        onChange={onSelect}
+        type="radio"
+        value={preset.slug}
+      />
       {/* Selected check */}
       <span
         aria-hidden
@@ -129,6 +133,6 @@ function PersonalityCard({
         <span className="font-medium text-foreground/70">Adatto a: </span>
         {preset.fitsFor}
       </p>
-    </button>
+    </label>
   );
 }

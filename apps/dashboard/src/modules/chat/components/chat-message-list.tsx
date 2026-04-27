@@ -35,7 +35,6 @@ export function ChatMessageList({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastIndex = messages.length - 1;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
