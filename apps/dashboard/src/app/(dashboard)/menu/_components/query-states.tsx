@@ -31,11 +31,21 @@ export function Empty() {
 export function Success({
   data,
 }: {
-  data: { menus: MenuListItem[]; venueSlug: string | null };
+  data: {
+    menus: MenuListItem[];
+    venueSlug: string | null;
+    activeMenuId: string | null;
+  };
 }) {
   if (data.menus.length === 0) {
     return <Empty />;
   }
 
-  return <MenusGrid menus={data.menus} venueSlug={data.venueSlug} />;
+  return (
+    <MenusGrid
+      activeMenuId={data.activeMenuId}
+      menus={data.menus}
+      venueSlug={data.venueSlug}
+    />
+  );
 }

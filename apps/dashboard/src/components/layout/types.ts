@@ -1,6 +1,7 @@
 interface BaseNavItem {
   title: string;
   badge?: string;
+  disabled?: boolean;
   icon?: React.ElementType;
   shortcut?: string[];
 }

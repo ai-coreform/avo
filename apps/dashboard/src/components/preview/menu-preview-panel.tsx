@@ -29,7 +29,7 @@ export function MenuPreviewPanel({
   }
 
   return (
-    <div className="flex h-full min-h-0 min-w-0 flex-1 overflow-hidden border-t">
+    <div className="flex h-full min-h-0 min-w-0 flex-1 overflow-hidden">
       <ResizablePanelGroup orientation="horizontal">
         <ResizablePanel defaultSize={60} minSize={30}>
           <div className="h-full overflow-y-auto">{children}</div>

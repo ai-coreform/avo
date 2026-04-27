@@ -66,6 +66,22 @@ function NavBadge({ children }: { children: ReactNode }) {
 
 function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
   const { setOpenMobile } = useSidebar();
+
+  if (item.disabled) {
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          className="pointer-events-none opacity-50"
+          tooltip={item.title}
+        >
+          {item.icon ? <item.icon /> : null}
+          <span>{item.title}</span>
+          {item.badge ? <NavBadge>{item.badge}</NavBadge> : null}
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  }
+
   return (
     <SidebarMenuItem>
       <SidebarMenuButton

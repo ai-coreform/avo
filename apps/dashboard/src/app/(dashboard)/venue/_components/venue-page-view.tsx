@@ -4,12 +4,13 @@ import { Button } from "@avo/ui/components/ui/button";
 import { Form } from "@avo/ui/components/ui/form";
 import { Separator } from "@avo/ui/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, Undo2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { VenueData } from "@/api/venue/types";
 import { useUpdateVenue } from "@/api/venue/use-update-venue";
+import { PageActions } from "@/providers/page-header-provider";
 import { slugify } from "@/utils/slugify";
 import { AddressSection } from "./address-section";
 import { GeneralSection } from "./general-section";
@@ -123,8 +124,12 @@ export function VenuePageView({ data }: { data: VenueData }) {
 
   return (
     <Form {...form}>
-      <form className="px-4 pb-8" onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="mb-6 flex items-center justify-end gap-3">
+      <form
+        className="px-4 pb-8"
+        id="venue-form"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <PageActions>
           <Button
             disabled={!isDirty}
             onClick={() => {
@@ -134,9 +139,14 @@ export function VenuePageView({ data }: { data: VenueData }) {
             type="button"
             variant="outline"
           >
-            Annulla
+            <Undo2 className="size-4" />
+            Ripristina
           </Button>
-          <Button disabled={isSubmitting || !isDirty} type="submit">
+          <Button
+            disabled={isSubmitting || !isDirty}
+            form="venue-form"
+            type="submit"
+          >
             {isSubmitting ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
@@ -144,13 +154,12 @@ export function VenuePageView({ data }: { data: VenueData }) {
             )}
             Salva
           </Button>
-        </div>
+        </PageActions>
 
-        <div className="max-w-2xl space-y-8">
+        <div className="mt-6 max-w-2xl space-y-8">
           <GeneralSection
             control={form.control}
             onSlugChange={handleSlugChange}
-            setValue={form.setValue}
             slug={form.watch("slug")}
           />
 

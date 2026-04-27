@@ -77,13 +77,6 @@ export default function IntegrationsPage() {
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-6 md:p-10">
-      <header className="space-y-2">
-        <h1 className="font-semibold text-2xl">Integrazioni</h1>
-        <p className="text-muted-foreground text-sm">
-          Gestionali e POS che hanno accesso al catalogo di questo locale.
-        </p>
-      </header>
-
       {error ? (
         <div className="rounded-md border border-destructive/30 bg-destructive/5 p-4 text-destructive text-sm">
           {error}

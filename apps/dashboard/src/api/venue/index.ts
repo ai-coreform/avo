@@ -1,4 +1,10 @@
-import { $getVenue, $updateVenue, type UpdateVenueInput } from "./types";
+import {
+  $getVenue,
+  $setActiveMenu,
+  $updateVenue,
+  type SetActiveMenuInput,
+  type UpdateVenueInput,
+} from "./types";
 
 class VenueApi {
   async get() {
@@ -8,6 +14,13 @@ class VenueApi {
 
   async update(data: UpdateVenueInput) {
     const res = await $updateVenue({
+      json: data,
+    });
+    return await res.json();
+  }
+
+  async setActiveMenu(data: SetActiveMenuInput) {
+    const res = await $setActiveMenu({
       json: data,
     });
     return await res.json();

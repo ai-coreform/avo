@@ -4,19 +4,19 @@ import database from "@/db";
 import { venue } from "@/db/schema/auth/venue";
 import { menu } from "@/db/schema/menu";
 
-export async function resolveMenu(c: Context, menuId: string) {
+export async function resolveVenueMenu(c: Context, venueSlug: string) {
   const [row] = await database
     .select({
       menuSlug: menu.slug,
       venueSlug: venue.slug,
     })
-    .from(menu)
-    .innerJoin(venue, eq(menu.venueId, venue.id))
-    .where(eq(menu.id, menuId))
+    .from(venue)
+    .innerJoin(menu, eq(venue.activeMenuId, menu.id))
+    .where(eq(venue.slug, venueSlug))
     .limit(1);
 
   if (!row) {
-    return c.json({ error: "Menu not found" }, 404);
+    return c.json({ error: "No active menu for this venue" }, 404);
   }
 
   return c.json({

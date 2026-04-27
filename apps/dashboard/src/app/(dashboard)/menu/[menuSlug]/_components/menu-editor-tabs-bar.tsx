@@ -1,8 +1,7 @@
 "use client";
 
-import { Button } from "@avo/ui/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@avo/ui/components/ui/tabs";
-import { Eye, EyeOff, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import type { LocalMenuEditorTab } from "../_utils/menu-editor-state";
 import { MenuTabsDialog } from "./menu-tabs-dialog";
 
@@ -20,9 +19,6 @@ interface MenuEditorTabsBarProps {
   onRemoveTab: (tabLocalId: string) => void;
   onMoveTab: (activeTabLocalId: string, overTabLocalId: string) => void;
   locales: string[];
-  showPreviewToggle: boolean;
-  showPreview: boolean;
-  onTogglePreview: () => void;
   onSaveToServer: () => Promise<boolean>;
 }
 
@@ -38,9 +34,6 @@ export function MenuEditorTabsBar({
   onRemoveTab,
   onMoveTab,
   locales,
-  showPreviewToggle,
-  showPreview,
-  onTogglePreview,
   onSaveToServer,
 }: MenuEditorTabsBarProps) {
   const tabsDialogProps = {
@@ -93,24 +86,6 @@ export function MenuEditorTabsBar({
       <div className="flex shrink-0 items-center gap-3">
         <MenuTabsDialog {...tabsDialogProps} />
       </div>
-
-      {showPreviewToggle ? (
-        <>
-          <div className="flex-1" />
-          <Button
-            onClick={onTogglePreview}
-            size="icon"
-            title={showPreview ? "Nascondi anteprima" : "Mostra anteprima"}
-            variant="outline"
-          >
-            {showPreview ? (
-              <EyeOff className="size-4" />
-            ) : (
-              <Eye className="size-4" />
-            )}
-          </Button>
-        </>
-      ) : null}
     </div>
   );
 }

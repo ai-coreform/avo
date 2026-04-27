@@ -89,7 +89,7 @@ export function ImageUpload({
             alt="Uploaded"
             className={cn(
               sizeClassName,
-              "border object-cover",
+              "border object-contain p-1",
               shape === "circle" ? "rounded-full" : "rounded-lg"
             )}
             src={resolvedUrl}

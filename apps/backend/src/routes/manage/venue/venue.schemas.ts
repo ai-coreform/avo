@@ -45,3 +45,11 @@ export const updateVenueSchema = z
   .strict();
 
 export type UpdateVenueInput = z.infer<typeof updateVenueSchema>;
+
+export const setActiveMenuSchema = z
+  .object({
+    menuId: z.string().uuid().nullable(),
+  })
+  .strict();
+
+export type SetActiveMenuInput = z.infer<typeof setActiveMenuSchema>;

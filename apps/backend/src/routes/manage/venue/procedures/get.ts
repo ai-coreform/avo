@@ -23,6 +23,7 @@ export async function get(c: Context) {
       placeId: result.placeId,
       latitude: result.latitude,
       longitude: result.longitude,
+      activeMenuId: result.activeMenuId,
       createdAt: result.createdAt.toISOString(),
       updatedAt: result.updatedAt.toISOString(),
     },

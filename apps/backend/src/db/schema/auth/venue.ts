@@ -28,6 +28,9 @@ export const venue = pgTable("venue", {
     .default({})
     .notNull(),
 
+  // The menu currently served via QR code (only one active at a time)
+  activeMenuId: uuid("active_menu_id"),
+
   // Social links
   socials: jsonb("socials").$type<VenueSocials>(),
 
