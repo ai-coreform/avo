@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import database from "@/db";
+import { venue } from "@/db/schema/auth/venue";
 import { menu } from "@/db/schema/menu";
 import type { MenuThemeData } from "@/types/menu-theme";
 import { getMenu } from "./get";
@@ -52,6 +53,14 @@ export async function updateMenu({
     .set(values)
     .where(and(eq(menu.id, menuId), eq(menu.venueId, venueId)))
     .returning();
+
+  // If this menu was archived and it was the active menu, clear the reference
+  if (status === "archived" || status === "draft") {
+    await database
+      .update(venue)
+      .set({ activeMenuId: null })
+      .where(and(eq(venue.id, venueId), eq(venue.activeMenuId, menuId)));
+  }
 
   return updatedMenu;
 }

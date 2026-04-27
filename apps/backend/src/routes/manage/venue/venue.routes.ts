@@ -3,8 +3,9 @@ import { Hono } from "hono";
 import type { z } from "zod";
 import { requireOrgAdmin } from "@/middleware/org-admin";
 import { get } from "./procedures/get";
+import { setActiveMenuProcedure } from "./procedures/set-active-menu";
 import { update } from "./procedures/update";
-import { updateVenueSchema } from "./venue.schemas";
+import { setActiveMenuSchema, updateVenueSchema } from "./venue.schemas";
 
 function validate<
   TTarget extends "json" | "param",
@@ -20,6 +21,11 @@ function validate<
 const venueRoutes = new Hono()
   .use(requireOrgAdmin())
   .get("/", async (c) => await get(c))
+  .patch(
+    "/active-menu",
+    validate("json", setActiveMenuSchema),
+    async (c) => await setActiveMenuProcedure(c, c.req.valid("json"))
+  )
   .patch(
     "/",
     validate("json", updateVenueSchema),

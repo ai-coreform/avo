@@ -18,8 +18,8 @@ export interface MenuTheme {
   fontBody: string;
 }
 
-export const LOGO_SIZE_MIN = 20;
-export const LOGO_SIZE_MAX = 48;
+export const LOGO_SIZE_MIN = 12;
+export const LOGO_SIZE_MAX = 64;
 export const LOGO_SIZE_STEP = 4;
 export const LOGO_SIZE_DEFAULT = 32;
 

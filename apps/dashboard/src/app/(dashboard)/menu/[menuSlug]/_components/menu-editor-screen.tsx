@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@avo/ui/components/ui/button";
-import { Plus } from "lucide-react";
+import { ChevronRight, Plus, UtensilsCrossed } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import type { MenuEditorData } from "@/api/menu/types";
 import { useGetMenuPreview } from "@/api/menu/use-get-menu-preview";
@@ -11,6 +12,8 @@ import {
   useTabPreviewSync,
 } from "@/components/preview/menu-preview-iframe";
 import { MenuPreviewPanel } from "@/components/preview/menu-preview-panel";
+import { useLayout } from "@/providers/layout-provider";
+import { PageTitle } from "@/providers/page-header-provider";
 import { useCategoryDrag } from "../_hooks/use-category-drag";
 import { useEditingRow } from "../_hooks/use-editing-row";
 import { useEntrySelection } from "../_hooks/use-entry-selection";
@@ -48,7 +51,7 @@ export function MenuEditorScreen({
   venueLogo,
 }: MenuEditorScreenProps) {
   const isXl = useXlBreakpoint();
-  const [showPreview, setShowPreview] = useState(true);
+  const { showPreview, togglePreview } = useLayout();
   const previewQuery = useGetMenuPreview(menuSlug, {
     enabled: isXl && showPreview && Boolean(venueSlug),
   });
@@ -153,6 +156,21 @@ export function MenuEditorScreen({
 
   const editorContent = (
     <PendingEditsProvider>
+      <PageTitle>
+        <div className="flex items-center gap-2">
+          <UtensilsCrossed className="h-5 w-5 text-muted-foreground" />
+          <Link
+            className="font-semibold text-lg text-muted-foreground hover:text-foreground"
+            href="/menu"
+          >
+            Menu
+          </Link>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <span className="font-semibold text-lg">
+            {editor.state.menu.name}
+          </span>
+        </div>
+      </PageTitle>
       <Main className="flex flex-col gap-5" fixed fluid>
         <MenuEditorTabsBar
           activeTabLocalId={activeView}
@@ -162,10 +180,7 @@ export function MenuEditorScreen({
           onRemoveTab={editor.removeTab}
           onSaveToServer={editor.save}
           onSelectTab={handleSetActiveTab}
-          onTogglePreview={() => setShowPreview((prev) => !prev)}
           onUpdateTab={editor.updateTab}
-          showPreview={showPreview}
-          showPreviewToggle={isXl && Boolean(venueSlug)}
           tabs={editor.state.tabs}
         />
 
@@ -300,7 +315,7 @@ export function MenuEditorScreen({
     return (
       <MenuPreviewPanel
         menuSlug={menuSlug}
-        onClosePreview={() => setShowPreview(false)}
+        onClosePreview={togglePreview}
         showPreview
         venueSlug={venueSlug}
       >

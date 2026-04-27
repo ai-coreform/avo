@@ -51,7 +51,7 @@ const app = new Hono({ strict: false })
     return csrf({ origin: allowedOrigins })(c, next);
   })
   .use("*", prettyJSON())
-  .use("*", secureHeaders())
+  .use("*", secureHeaders({ crossOriginResourcePolicy: "cross-origin" }))
   .use("*", timing())
   // .use(
   //   "*",

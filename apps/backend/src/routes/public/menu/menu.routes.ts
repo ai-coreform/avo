@@ -3,12 +3,12 @@ import { Hono } from "hono";
 import type { z } from "zod";
 import {
   menuParamSchema,
-  resolveMenuParamSchema,
+  resolveVenueParamSchema,
   translationParamsSchema,
 } from "./menu.schemas";
 import { get as getFullMenu } from "./procedures/get-full-menu";
 import { get as getTranslations } from "./procedures/get-translations";
-import { resolveMenu } from "./procedures/resolve-menu";
+import { resolveVenueMenu } from "./procedures/resolve-venue-menu";
 
 function validate<
   TTarget extends "json" | "param",
@@ -23,9 +23,9 @@ function validate<
 
 const publicMenuRoutes = new Hono()
   .get(
-    "/resolve/:menuId",
-    validate("param", resolveMenuParamSchema),
-    async (c) => await resolveMenu(c, c.req.valid("param").menuId)
+    "/resolve-venue/:venueSlug",
+    validate("param", resolveVenueParamSchema),
+    async (c) => await resolveVenueMenu(c, c.req.valid("param").venueSlug)
   )
   .get(
     "/:venueSlug/:menuSlug",

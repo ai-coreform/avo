@@ -10,7 +10,7 @@ export async function list(c: Context) {
   const menus = await listMenus({ venueId: member.venueId });
 
   const [venueRow] = await database
-    .select({ slug: venue.slug })
+    .select({ slug: venue.slug, activeMenuId: venue.activeMenuId })
     .from(venue)
     .where(eq(venue.id, member.venueId))
     .limit(1);
@@ -18,5 +18,6 @@ export async function list(c: Context) {
   return c.json({
     data: menus.map(serializeMenu),
     venueSlug: venueRow?.slug ?? null,
+    activeMenuId: venueRow?.activeMenuId ?? null,
   });
 }

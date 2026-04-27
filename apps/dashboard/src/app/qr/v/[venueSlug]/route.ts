@@ -9,14 +9,14 @@ interface ResolveResponse {
 }
 
 export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ menuId: string }> }
+  request: NextRequest,
+  { params }: { params: Promise<{ venueSlug: string }> }
 ) {
-  const { menuId } = await params;
+  const { venueSlug } = await params;
 
   try {
     const res = await fetch(
-      `${API_BASE_URL}/api/public/menu/resolve/${menuId}`,
+      `${API_BASE_URL}/api/public/menu/resolve-venue/${venueSlug}`,
       { next: { revalidate: 60 } }
     );
 
@@ -25,10 +25,10 @@ export async function GET(
     }
 
     const json = (await res.json()) as ResolveResponse;
-    const { venueSlug, menuSlug } = json.data;
+    const { venueSlug: resolvedVenueSlug, menuSlug } = json.data;
 
-    const origin = _request.nextUrl.origin;
-    const destination = `${origin}/m/${venueSlug}/${menuSlug}`;
+    const origin = request.nextUrl.origin;
+    const destination = `${origin}/m/${resolvedVenueSlug}/${menuSlug}`;
 
     return NextResponse.redirect(destination, 302);
   } catch {

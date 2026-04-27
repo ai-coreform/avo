@@ -198,6 +198,7 @@ class FileUploadService {
         "Content-Type": localFile.type || APPLICATION_OCTET_STREAM,
         "Cache-Control": "public, max-age=31536000, immutable",
         "Content-Disposition": `inline; filename="${fileName}"`,
+        "Cross-Origin-Resource-Policy": "cross-origin",
       },
     });
   }

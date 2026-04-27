@@ -9,34 +9,20 @@ import {
   FormMessage,
 } from "@avo/ui/components/ui/form";
 import { Input } from "@avo/ui/components/ui/input";
-import { useCallback } from "react";
-import type { Control, UseFormSetValue } from "react-hook-form";
-import { useWatch } from "react-hook-form";
-import { ImageUpload } from "@/components/image-upload";
+import type { Control } from "react-hook-form";
 import type { VenueFormValues } from "./venue-page-view";
 
 interface GeneralSectionProps {
   control: Control<VenueFormValues>;
-  setValue: UseFormSetValue<VenueFormValues>;
   slug: string;
   onSlugChange: (value: string) => void;
 }
 
 export function GeneralSection({
   control,
-  setValue,
   slug,
   onSlugChange,
 }: GeneralSectionProps) {
-  const logo = useWatch({ control, name: "logo" });
-
-  const handleLogoChange = useCallback(
-    (url: string | null) => {
-      setValue("logo", url, { shouldDirty: true });
-    },
-    [setValue]
-  );
-
   return (
     <div className="space-y-5">
       <div>
@@ -44,57 +30,48 @@ export function GeneralSection({
           Informazioni generali
         </h3>
         <p className="text-muted-foreground text-sm">
-          Logo, nome e indirizzo web del tuo locale.
+          Nome e indirizzo web del tuo locale.
         </p>
       </div>
 
-      <div className="flex items-start gap-5">
-        <ImageUpload
-          onChange={handleLogoChange}
-          placeholder="Logo"
-          shape="circle"
-          sizeClassName="size-20"
-          value={logo}
+      <div className="space-y-5">
+        <FormField
+          control={control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nome del locale</FormLabel>
+              <FormControl>
+                <Input placeholder="es. Ristorante Da Mario" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        <div className="flex-1 space-y-5">
-          <FormField
-            control={control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nome del locale</FormLabel>
-                <FormControl>
-                  <Input placeholder="es. Ristorante Da Mario" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
-          <FormField
-            control={control}
-            name="slug"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Slug (URL)</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    onChange={(e) => onSlugChange(e.target.value)}
-                    placeholder="es. ristorante-da-mario"
-                  />
-                </FormControl>
-                <FormDescription>
-                  I tuoi menu saranno visibili su{" "}
-                  <span className="font-medium text-foreground">
-                    avomenu.com/{slug || "..."}/nome-menu
-                  </span>
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          control={control}
+          name="slug"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Slug (URL)</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  onChange={(e) => onSlugChange(e.target.value)}
+                  placeholder="es. ristorante-da-mario"
+                />
+              </FormControl>
+              <FormDescription>
+                I tuoi menu saranno visibili su{" "}
+                <span className="font-medium text-foreground">
+                  avomenu.com/{slug || "..."}/nome-menu
+                </span>
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </div>
     </div>
   );

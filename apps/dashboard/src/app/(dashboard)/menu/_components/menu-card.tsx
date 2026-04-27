@@ -13,43 +13,40 @@ import { format, parseISO } from "date-fns";
 import { it } from "date-fns/locale";
 import {
   ArrowUpRight,
+  Check,
   Clock3,
   EllipsisVertical,
   Globe,
   PencilLine,
-  QrCode,
+  Radio,
   Trash2,
+  UtensilsCrossed,
 } from "lucide-react";
 import Link from "next/link";
-import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
 import { getMenuStatusClassName, getMenuStatusLabel } from "@/api/menu/data";
 import type { MenuListItem } from "@/api/menu/types";
+import { useSetActiveMenu } from "@/api/venue/use-set-active-menu";
 import { DeleteMenuDialog } from "./delete-menu-dialog";
-import { MenuQrDialog } from "./menu-qr-dialog";
 import { MenuUpsertDialog } from "./menu-upsert-dialog";
 
 interface MenuCardProps {
   menu: MenuListItem;
   venueSlug: string | null;
-}
-
-function buildQrUrl(menuId: string) {
-  const origin =
-    typeof window !== "undefined"
-      ? window.location.origin
-      : "http://localhost:3000";
-  return `${origin}/qr/${menuId}`;
+  activeMenuId: string | null;
 }
 
 function formatMenuDate(value: string) {
   return format(parseISO(value), "d MMM yyyy", { locale: it });
 }
 
-export function MenuCard({ menu, venueSlug }: MenuCardProps) {
+export function MenuCard({ menu, venueSlug, activeMenuId }: MenuCardProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [qrOpen, setQrOpen] = useState(false);
+  const setActiveMenu = useSetActiveMenu();
+
+  const isActive = menu.id === activeMenuId;
+  const canSetActive = menu.status === "published" && !isActive;
 
   return (
     <>
@@ -57,23 +54,23 @@ export function MenuCard({ menu, venueSlug }: MenuCardProps) {
         className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-black/5 hover:shadow-lg"
         href={`/menu/${menu.slug}`}
       >
-        {/* QR area — primary-colored with decorative elements */}
+        {/* Colored header */}
         <div className="relative flex h-28 items-center justify-center overflow-hidden bg-primary">
           {/* Decorative circles */}
           <div className="absolute -top-6 -left-6 size-24 rounded-full bg-white/[0.04]" />
           <div className="absolute -right-4 -bottom-8 size-32 rounded-full bg-white/[0.04]" />
           <div className="absolute top-3 right-12 size-10 rounded-full bg-white/[0.06]" />
 
-          {/* QR code */}
-          <div className="relative rounded-lg bg-white p-1.5 shadow-black/15 shadow-md">
-            <QRCodeSVG
-              bgColor="transparent"
-              fgColor="var(--primary)"
-              level="M"
-              size={64}
-              value={buildQrUrl(menu.id)}
-            />
-          </div>
+          {/* Menu icon */}
+          <UtensilsCrossed className="size-10 text-primary-foreground/30" />
+
+          {/* Active badge */}
+          {isActive && (
+            <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-primary-foreground backdrop-blur-sm">
+              <Radio className="size-3" />
+              <span className="font-medium text-xs">Attivo</span>
+            </div>
+          )}
 
           {/* Hover arrow */}
           <div className="absolute top-3 right-3 translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100">
@@ -132,10 +129,14 @@ export function MenuCard({ menu, venueSlug }: MenuCardProps) {
                     </a>
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onSelect={() => setQrOpen(true)}>
-                  <QrCode className="mr-2 size-4" />
-                  QR Code
-                </DropdownMenuItem>
+                {canSetActive && (
+                  <DropdownMenuItem
+                    onSelect={() => setActiveMenu.mutate({ menuId: menu.id })}
+                  >
+                    <Check className="mr-2 size-4" />
+                    Imposta come attivo
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
@@ -165,13 +166,6 @@ export function MenuCard({ menu, venueSlug }: MenuCardProps) {
         menu={menu}
         onOpenChange={setDeleteOpen}
         open={deleteOpen}
-      />
-      <MenuQrDialog
-        menuId={menu.id}
-        menuName={menu.name}
-        menuSlug={menu.slug}
-        onOpenChange={setQrOpen}
-        open={qrOpen}
       />
     </>
   );

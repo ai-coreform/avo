@@ -1,62 +1,95 @@
 "use client";
-import { Separator } from "@avo/ui/components/ui/separator";
 import { SidebarTrigger } from "@avo/ui/components/ui/sidebar";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { Breadcrumbs } from "../breadcrumbs";
+import {
+  usePageHeaderActions,
+  usePageHeaderTitle,
+} from "@/providers/page-header-provider";
+import { sidebarData } from "./data/sidebar-data";
 
 type HeaderProps = React.HTMLAttributes<HTMLElement> & {
   fixed?: boolean;
   ref?: React.Ref<HTMLElement>;
 };
 
-export default function Header({
-  className,
-  fixed,
-  children,
-  ...props
-}: HeaderProps) {
-  const [offset, setOffset] = useState(0);
+interface PageInfo {
+  icon?: React.ElementType;
+  title: string;
+  url: string;
+}
 
-  useEffect(() => {
-    const onScroll = () => {
-      setOffset(document.body.scrollTop || document.documentElement.scrollTop);
-    };
+/** Flatten all sidebar nav items (including nested sub-items) into a flat list. */
+function flattenSidebarItems(): PageInfo[] {
+  const items: PageInfo[] = [];
+  for (const group of sidebarData.navGroups) {
+    for (const item of group.items) {
+      if ("url" in item && item.url) {
+        items.push({ icon: item.icon, title: item.title, url: item.url });
+      }
+      if ("items" in item && item.items) {
+        for (const sub of item.items) {
+          items.push({ icon: sub.icon, title: sub.title, url: sub.url });
+        }
+      }
+    }
+  }
+  return items;
+}
 
-    // Add scroll listener to the body
-    document.addEventListener("scroll", onScroll, { passive: true });
+const allPageItems = flattenSidebarItems();
 
-    // Clean up the event listener on unmount
-    return () => document.removeEventListener("scroll", onScroll);
-  }, []);
+function matchPathToPage(pathname: string): PageInfo | null {
+  let best: PageInfo | null = null;
+  for (const page of allPageItems) {
+    const isMatch =
+      pathname === page.url || pathname.startsWith(`${page.url}/`);
+    if (isMatch && (!best || page.url.length > best.url.length)) {
+      best = page;
+    }
+  }
+  return best;
+}
 
-  const shouldShowShadow = offset > 10 && fixed;
-  const shouldShowBackdrop = offset > 10 && fixed;
+function useCurrentPageInfo() {
+  const pathname = usePathname();
+  return useMemo(() => matchPathToPage(pathname), [pathname]);
+}
 
-  const headerClasses = [
-    "z-50 h-16",
-    fixed && "header-fixed peer/header sticky top-0 w-[inherit]",
-    shouldShowShadow ? "shadow" : "shadow-none",
-    className,
-  ].filter(Boolean);
+export default function Header({ className, fixed, ...props }: HeaderProps) {
+  const pageInfo = useCurrentPageInfo();
+  const actions = usePageHeaderActions();
+  const titleOverride = usePageHeaderTitle();
 
-  const divClasses = [
-    "relative flex h-full items-center gap-3 p-4 sm:gap-4",
-    shouldShowBackdrop &&
-      "after:-z-10 after:absolute after:inset-0 after:bg-background/20 after:backdrop-blur-lg",
-  ].filter(Boolean);
+  const Icon = pageInfo?.icon;
 
   return (
-    <header className={cn(...headerClasses)} {...props}>
-      <div className={cn(...divClasses)}>
-        <SidebarTrigger className="max-md:scale-125" variant="outline" />
-        <Separator className="h-6" orientation="vertical" />
-        <Breadcrumbs />
-        {children}
-        <div className="ml-auto">
-          {/* <ThemeToggle /> */}
-          {/* <SearchInput /> */}
-        </div>
+    <header
+      className={cn(
+        "z-50 h-16 shrink-0 border-b bg-background",
+        fixed && "header-fixed peer/header sticky top-0 w-[inherit]",
+        className
+      )}
+      {...props}
+    >
+      <div className="flex h-full items-center gap-3 px-4 sm:gap-4">
+        <SidebarTrigger variant="ghost" />
+        <div className="h-5 w-px shrink-0 bg-border" />
+
+        {/* Page icon + title (or custom title override from page) */}
+        {titleOverride ??
+          (pageInfo && (
+            <div className="flex items-center gap-2">
+              {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
+              <h1 className="font-semibold text-lg">{pageInfo.title}</h1>
+            </div>
+          ))}
+
+        {/* Page-specific action buttons */}
+        {actions && (
+          <div className="ml-auto flex items-center gap-2">{actions}</div>
+        )}
       </div>
     </header>
   );

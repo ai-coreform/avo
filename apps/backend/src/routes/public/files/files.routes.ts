@@ -1,6 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
+import { secureHeaders } from "hono/secure-headers";
 import { z } from "zod";
 import { FileUploadService } from "@/lib/file-upload";
 import { getUploadedFileById } from "@/routes/manage/files/files.service";
@@ -10,6 +11,8 @@ const fileIdParamSchema = z.object({
 });
 
 const publicFilesRoutes = new Hono()
+  // Allow cross-origin loading of public files (images loaded from dashboard on a different port)
+  .use("*", secureHeaders({ crossOriginResourcePolicy: "cross-origin" }))
   .get(
     "/local",
     async (c) => await FileUploadService.getLocalDownloadResponse(c.req.raw)

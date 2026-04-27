@@ -6,7 +6,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@avo/ui/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
 
 const LOCALE_LABELS: Record<string, string> = {
   it: "Italiano",
@@ -61,18 +60,13 @@ export function LanguageSelector({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 transition-colors hover:opacity-80"
-          style={{
-            backgroundColor: "var(--menu-accent)",
-            color: "var(--menu-text)",
-          }}
+          aria-label="Cambia lingua"
+          className="flex h-9 w-9 items-center justify-center transition-opacity hover:opacity-60"
           type="button"
         >
-          <span className="text-sm">{LOCALE_FLAGS[currentLocale] ?? "🌐"}</span>
-          <span className="font-medium font-sans text-sm uppercase">
-            {currentLocale}
+          <span className="text-lg leading-none">
+            {LOCALE_FLAGS[currentLocale] ?? "🌐"}
           </span>
-          <ChevronDown className="h-3.5 w-3.5 opacity-50" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

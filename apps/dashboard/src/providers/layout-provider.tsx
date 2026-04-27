@@ -24,6 +24,9 @@ interface LayoutContextType {
   defaultVariant: Variant;
   variant: Variant;
   setVariant: (variant: Variant) => void;
+
+  showPreview: boolean;
+  togglePreview: () => void;
 }
 
 const LayoutContext = createContext<LayoutContextType | null>(null);
@@ -42,6 +45,9 @@ export function LayoutProvider({ children }: LayoutProviderProps) {
     const saved = getCookie(LAYOUT_VARIANT_COOKIE_NAME);
     return (saved as Variant) || DEFAULT_VARIANT;
   });
+
+  const [showPreview, setShowPreview] = useState(true);
+  const togglePreview = () => setShowPreview((prev) => !prev);
 
   const setCollapsible = (newCollapsible: Collapsible) => {
     _setCollapsible(newCollapsible);
@@ -70,6 +76,8 @@ export function LayoutProvider({ children }: LayoutProviderProps) {
     defaultVariant: DEFAULT_VARIANT,
     variant,
     setVariant,
+    showPreview,
+    togglePreview,
   };
 
   return <LayoutContext value={contextValue}>{children}</LayoutContext>;

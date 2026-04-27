@@ -11,7 +11,6 @@ import { useChatTransport } from "../lib/use-chat-transport";
 import { useTranscribeMutation } from "../lib/use-transcribe-mutation";
 import { useVoiceRecording } from "../lib/use-voice-recording";
 import { ChatComposer } from "./chat-composer";
-import { ChatHeader } from "./chat-header";
 import { ChatMessageList } from "./chat-message-list";
 
 export function ChatContent() {
@@ -156,8 +155,6 @@ export function ChatContent() {
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <ChatHeader />
-
       <ChatMessageList
         addToolApprovalResponse={addToolApprovalResponse}
         isBusy={isBusy}

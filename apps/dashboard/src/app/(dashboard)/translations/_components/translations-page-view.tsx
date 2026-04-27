@@ -32,6 +32,7 @@ import {
   useTranslationStatus,
 } from "@/api/translations/use-translation-status";
 import { getLocaleConfig } from "@/data/locale-configs";
+import { PageActions } from "@/providers/page-header-provider";
 import { AddLanguageDialog } from "./add-language-dialog";
 import { SortableLocaleCard } from "./sortable-locale-card";
 import { TranslationsInfoSection } from "./translations-info-section";
@@ -249,22 +250,17 @@ export function TranslationsPageView({ locales }: TranslationsPageViewProps) {
         </div>
       )}
 
-      {/* Header with add button */}
-      <div className="flex items-center justify-between">
-        <p className="font-medium text-[11px] text-muted-foreground uppercase tracking-wider">
-          Lingue attive
-        </p>
-        <Button
-          disabled={isBusy}
-          onClick={() => setShowAddDialog(true)}
-          size="sm"
-          variant="outline"
-        >
+      <PageActions>
+        <Button disabled={isBusy} onClick={() => setShowAddDialog(true)}>
           <Plus className="size-4" />
-          <span className="hidden md:inline">Aggiungi lingua</span>
-          <span className="md:hidden">Aggiungi</span>
+          Aggiungi lingua
         </Button>
-      </div>
+      </PageActions>
+
+      {/* Section label */}
+      <p className="font-medium text-[11px] text-muted-foreground uppercase tracking-wider">
+        Lingue attive
+      </p>
 
       {/* Language cards grid */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

@@ -17,7 +17,11 @@ export function useGetMenus() {
     queryKey: menusQueryKeys.list(),
     queryFn: async () => {
       const response = await menusApi.list();
-      return { menus: response.data, venueSlug: response.venueSlug };
+      return {
+        menus: response.data,
+        venueSlug: response.venueSlug,
+        activeMenuId: response.activeMenuId,
+      };
     },
   });
 }

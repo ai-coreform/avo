@@ -2,6 +2,7 @@
 
 import { Search } from "lucide-react";
 import { API_BASE_URL } from "@/config/environment";
+import { useMenuTheme } from "../_hooks/use-menu-theme";
 import { LanguageSelector } from "./language-selector";
 
 interface MenuHeaderProps {
@@ -32,6 +33,7 @@ export function MenuHeader({
   onSearchOpen,
 }: MenuHeaderProps) {
   const logoUrl = resolveLogoUrl(venueLogo);
+  const theme = useMenuTheme();
 
   return (
     <div
@@ -45,8 +47,9 @@ export function MenuHeader({
           // biome-ignore lint/correctness/useImageSize: dimensions via CSS
           <img
             alt={venueName}
-            className="max-h-[35px] object-cover"
+            className="object-contain"
             src={logoUrl}
+            style={{ height: `${theme.logoSize}px` }}
           />
         ) : (
           <span
@@ -59,18 +62,15 @@ export function MenuHeader({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         <button
           aria-label="Cerca nel menu"
-          className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:opacity-80"
+          className="flex h-9 w-9 items-center justify-center transition-opacity hover:opacity-60"
           onClick={onSearchOpen}
-          style={{
-            backgroundColor: "var(--menu-accent)",
-            color: "var(--menu-text)",
-          }}
+          style={{ color: "var(--menu-text)" }}
           type="button"
         >
-          <Search className="h-4.5 w-4.5" />
+          <Search className="h-5 w-5" />
         </button>
 
         <LanguageSelector

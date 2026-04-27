@@ -118,6 +118,10 @@ export function MenuShell({
         }
         [data-menu] .scrollbar-hide::-webkit-scrollbar { display: none; }
         [data-menu] .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        [data-menu] { -ms-overflow-style: none; scrollbar-width: none; }
+        [data-menu]::-webkit-scrollbar { display: none; }
+        html:has([data-menu]) { -ms-overflow-style: none; scrollbar-width: none; }
+        html:has([data-menu])::-webkit-scrollbar { display: none; }
       `}</style>
 
         <div
@@ -186,6 +190,7 @@ export function MenuShell({
 
           {/* Search overlay */}
           <MenuSearchDialog
+            groupedResults={search.groupedResults}
             isOpen={searchOpen}
             onClose={() => {
               setSearchOpen(false);
@@ -193,7 +198,7 @@ export function MenuShell({
             }}
             onSearch={search.search}
             query={search.query}
-            results={search.results}
+            totalResults={search.results.length}
           />
         </div>
       </MenuThemeProvider>

@@ -15,7 +15,7 @@ class FilesApi {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch(`${API_BASE_URL}/api/dashboard/files/upload`, {
+    const res = await fetch(`${API_BASE_URL}/api/manage/files/upload`, {
       method: "POST",
       body: formData,
       credentials: "include",
@@ -32,7 +32,7 @@ class FilesApi {
   }
 
   async delete(fileId: string): Promise<void> {
-    const res = await fetch(`${API_BASE_URL}/api/dashboard/files/${fileId}`, {
+    const res = await fetch(`${API_BASE_URL}/api/manage/files/${fileId}`, {
       method: "DELETE",
       credentials: "include",
     });

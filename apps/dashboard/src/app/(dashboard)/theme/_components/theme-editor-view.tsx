@@ -2,17 +2,29 @@
 
 import { Button } from "@avo/ui/components/ui/button";
 import { Separator } from "@avo/ui/components/ui/separator";
+import { Slider } from "@avo/ui/components/ui/slider";
 import { useQuery } from "@tanstack/react-query";
-import { Eye, EyeOff, Loader2, Save, Undo2 } from "lucide-react";
-import { useState, useSyncExternalStore } from "react";
+import { Loader2, Save, Undo2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import { menusApi } from "@/api/menu";
 import type { MenuListItem } from "@/api/menu/types";
 import { menusQueryKeys } from "@/api/menu/use-get-menus";
+import { useGetVenue } from "@/api/venue/use-get-venue";
+import { useUpdateVenue } from "@/api/venue/use-update-venue";
+import {
+  LOGO_SIZE_MAX,
+  LOGO_SIZE_MIN,
+  LOGO_SIZE_STEP,
+} from "@/app/(public-menu)/m/[venueSlug]/[menuSlug]/_utils/menu-theme";
+import { ImageUpload } from "@/components/image-upload";
 import {
   useMenuDataPreviewSync,
   useThemePreviewSync,
 } from "@/components/preview/menu-preview-iframe";
 import { MenuPreviewPanel } from "@/components/preview/menu-preview-panel";
+import { useLayout } from "@/providers/layout-provider";
+import { PageActions } from "@/providers/page-header-provider";
 import { useThemeEditor } from "../_hooks/use-theme-editor";
 import { ColorSchemeSection } from "./color-scheme-section";
 import { FontSection } from "./font-section";
@@ -34,12 +46,31 @@ export function ThemeEditorView({
   data: { menus: MenuListItem[]; venueSlug: string | null };
 }) {
   const isXl = useSyncExternalStore(xlSubscribe, xlSnapshot, xlServerSnapshot);
+  const { showPreview, togglePreview } = useLayout();
   const menus = data.menus;
+
+  const queryClient = useQueryClient();
+  const venueQuery = useGetVenue();
+  const updateVenue = useUpdateVenue();
+  const venueLogo = venueQuery.data?.logo ?? null;
+
+  const handleLogoChange = useCallback(
+    (url: string | null) => {
+      updateVenue.mutate(
+        { logo: url },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: menusQueryKeys.all });
+          },
+        }
+      );
+    },
+    [updateVenue, queryClient]
+  );
 
   const [selectedSlug, setSelectedSlug] = useState<string | null>(
     menus[0]?.slug ?? null
   );
-  const [showPreview, setShowPreview] = useState(true);
 
   const selectedMenu = menus.find((m) => m.slug === selectedSlug) ?? null;
 
@@ -75,50 +106,75 @@ export function ThemeEditorView({
 
   const settingsContent = (
     <div className="flex h-full flex-col overflow-y-auto px-4 py-6">
-      {/* Top bar: menu selector + actions */}
-      <div className="flex items-center justify-between gap-4">
-        <MenuSelector
-          menus={menus}
-          onSelect={setSelectedSlug}
-          selectedSlug={selectedSlug}
-        />
+      <PageActions>
+        <Button
+          disabled={!(isDirty && selectedMenu)}
+          onClick={handleReset}
+          variant="outline"
+        >
+          <Undo2 className="size-4" />
+          Ripristina
+        </Button>
+        <Button
+          disabled={isSaving || !isDirty || !selectedMenu}
+          onClick={handleSave}
+        >
+          {isSaving ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Save className="size-4" />
+          )}
+          Salva
+        </Button>
+      </PageActions>
 
-        <div className="flex items-center gap-2">
-          {isXl && selectedMenu && data.venueSlug ? (
-            <Button
-              onClick={() => setShowPreview((prev) => !prev)}
-              size="icon"
-              title={showPreview ? "Nascondi anteprima" : "Mostra anteprima"}
-              variant="outline"
-            >
-              {showPreview ? (
-                <EyeOff className="size-4" />
-              ) : (
-                <Eye className="size-4" />
-              )}
-            </Button>
-          ) : null}
-          <Button
-            disabled={!selectedMenu}
-            onClick={handleReset}
-            variant="outline"
-          >
-            <Undo2 className="size-4" />
-            Ripristina
-          </Button>
-          <Button
-            disabled={isSaving || !isDirty || !selectedMenu}
-            onClick={handleSave}
-          >
-            {isSaving ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Save className="size-4" />
-            )}
-            Salva
-          </Button>
+      {/* Logo section */}
+      <div className="max-w-3xl space-y-4">
+        <div>
+          <h3 className="font-display font-semibold text-lg">Logo</h3>
+          <p className="text-muted-foreground text-sm">
+            Il logo apparirà nell'intestazione del menu. Formati supportati:
+            JPG, PNG, WebP, SVG (max 2 MB).
+          </p>
+        </div>
+        <div className="flex items-center gap-6">
+          <ImageUpload
+            onChange={handleLogoChange}
+            placeholder="Logo"
+            shape="circle"
+            sizeClassName="size-20"
+            value={venueLogo}
+          />
+          {venueLogo && (
+            <div className="flex-1 max-w-md space-y-2">
+              <label className="font-medium text-sm">Dimensione Logo</label>
+              <div className="flex items-center gap-3">
+                <Slider
+                  max={LOGO_SIZE_MAX}
+                  min={LOGO_SIZE_MIN}
+                  onValueChange={([val]) =>
+                    updateTheme("logoSize", val ?? LOGO_SIZE_MIN)
+                  }
+                  step={LOGO_SIZE_STEP}
+                  value={[theme.logoSize]}
+                />
+                <span className="w-12 shrink-0 text-muted-foreground text-sm">
+                  {theme.logoSize}px
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      <Separator className="my-6" />
+
+      {/* Menu selector */}
+      <MenuSelector
+        menus={menus}
+        onSelect={setSelectedSlug}
+        selectedSlug={selectedSlug}
+      />
 
       {selectedMenu ? (
         <div className="mt-5 max-w-3xl space-y-8">
@@ -149,7 +205,7 @@ export function ThemeEditorView({
     return (
       <MenuPreviewPanel
         menuSlug={selectedMenu.slug}
-        onClosePreview={() => setShowPreview(false)}
+        onClosePreview={togglePreview}
         showPreview
         venueSlug={venueSlug}
       >

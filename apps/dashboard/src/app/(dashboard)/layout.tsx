@@ -7,6 +7,7 @@ import { authClient } from "@/lib/auth/client";
 import { getCookie } from "@/lib/cookies";
 import { cn } from "@/lib/utils";
 import { LayoutProvider } from "@/providers/layout-provider";
+import { PageHeaderProvider } from "@/providers/page-header-provider";
 
 export default function DashboardLayout({
   children,
@@ -19,26 +20,31 @@ export default function DashboardLayout({
   return (
     <KBar>
       <LayoutProvider>
-        <SidebarProvider defaultOpen={defaultOpen}>
-          <AppSidebar user={data?.user} />
-          <SidebarInset
-            className={cn(
-              // Set content container, so we can use container queries
-              "@container/content",
+        <PageHeaderProvider>
+          <SidebarProvider defaultOpen={defaultOpen}>
+            <AppSidebar user={data?.user} />
+            <SidebarInset
+              className={cn(
+                // Set content container, so we can use container queries
+                "@container/content",
 
-              // If layout is fixed, set the height
-              // to 100svh to prevent overflow
-              "has-data-[layout=fixed]:h-svh",
+                // Remove the inset variant's shadow — the header border-b is sufficient
+                "shadow-none!",
 
-              // If layout is fixed and sidebar is inset,
-              // set the height to 100svh - spacing (total margins) to prevent overflow
-              "peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-(var(--spacing)*4))]"
-            )}
-          >
-            <Header fixed />
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
+                // If layout is fixed, set the height
+                // to 100svh to prevent overflow
+                "has-data-[layout=fixed]:h-svh",
+
+                // If layout is fixed and sidebar is inset,
+                // set the height to 100svh - spacing (total margins) to prevent overflow
+                "peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-(var(--spacing)*4))]"
+              )}
+            >
+              <Header fixed />
+              {children}
+            </SidebarInset>
+          </SidebarProvider>
+        </PageHeaderProvider>
       </LayoutProvider>
     </KBar>
   );

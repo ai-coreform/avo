@@ -28,6 +28,7 @@ export async function update(c: Context, input: UpdateVenueInput) {
       placeId: result.placeId,
       latitude: result.latitude,
       longitude: result.longitude,
+      activeMenuId: result.activeMenuId,
       createdAt: result.createdAt.toISOString(),
       updatedAt: result.updatedAt.toISOString(),
     },
