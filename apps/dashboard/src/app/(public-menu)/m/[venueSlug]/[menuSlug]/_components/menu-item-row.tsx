@@ -71,6 +71,7 @@ export function MenuItemRow({ entry }: MenuItemRowProps) {
               fill
               sizes="(max-width: 640px) 56px, 64px"
               src={entry.imageUrl}
+              unoptimized
             />
           </button>
         )}

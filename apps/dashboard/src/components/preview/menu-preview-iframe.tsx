@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { PublicMenuData } from "@/api/public-menu/types";
 import type {
+  AiWaiterPreviewSettings,
+  PreviewAiSettingsMessage,
+  PreviewChatOpenMessage,
   PreviewMenuMessage,
   PreviewTabChangeMessage,
   PreviewThemeMessage,
@@ -46,6 +49,8 @@ export function usePreviewMessenger() {
         | PreviewThemeMessage
         | PreviewMenuMessage
         | PreviewTabChangeMessage
+        | PreviewChatOpenMessage
+        | PreviewAiSettingsMessage
     ) => {
       const iframe = document.querySelector<HTMLIFrameElement>(
         "[data-preview-iframe]"
@@ -78,7 +83,27 @@ export function usePreviewMessenger() {
     [send]
   );
 
-  return { sendTheme, sendMenuData, sendTabChange };
+  const sendChatOpen = useCallback(
+    (open: boolean) => {
+      send({ type: "avo-preview:chat-open", open });
+    },
+    [send]
+  );
+
+  const sendAiSettings = useCallback(
+    (settings: AiWaiterPreviewSettings) => {
+      send({ type: "avo-preview:ai-settings-update", settings });
+    },
+    [send]
+  );
+
+  return {
+    sendTheme,
+    sendMenuData,
+    sendTabChange,
+    sendChatOpen,
+    sendAiSettings,
+  };
 }
 
 /**
@@ -124,6 +149,74 @@ export function useTabPreviewSync(tabSlug: string | null) {
       sendTabChange(tabSlug);
     }
   }, [tabSlug, sendTabChange]);
+}
+
+/**
+ * Hook that pushes AI Waiter settings (color, questions, personality) into
+ * the preview iframe. Resends on the iframe's "ready" signal so the override
+ * lands even if it was queued before the public menu mounted.
+ */
+export function useAiSettingsPreviewSync(
+  settings: AiWaiterPreviewSettings | null
+) {
+  const { sendAiSettings } = usePreviewMessenger();
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+
+  useEffect(() => {
+    if (settings) {
+      sendAiSettings(settings);
+    }
+  }, [settings, sendAiSettings]);
+
+  useEffect(() => {
+    const handleReady = (event: MessageEvent) => {
+      if (
+        event.data &&
+        typeof event.data === "object" &&
+        event.data.type === "avo-preview:ready" &&
+        settingsRef.current
+      ) {
+        sendAiSettings(settingsRef.current);
+      }
+    };
+
+    window.addEventListener("message", handleReady);
+    return () => window.removeEventListener("message", handleReady);
+  }, [sendAiSettings]);
+}
+
+/**
+ * Hook that tells the iframe whether the AI chat panel should be open.
+ * Resends on the iframe's "ready" signal so the chat opens reliably even
+ * if the message arrives before the public menu finished mounting.
+ */
+export function useChatOpenPreviewSync(open: boolean | null) {
+  const { sendChatOpen } = usePreviewMessenger();
+  const openRef = useRef(open);
+  openRef.current = open;
+
+  useEffect(() => {
+    if (open !== null) {
+      sendChatOpen(open);
+    }
+  }, [open, sendChatOpen]);
+
+  useEffect(() => {
+    const handleReady = (event: MessageEvent) => {
+      if (
+        event.data &&
+        typeof event.data === "object" &&
+        event.data.type === "avo-preview:ready" &&
+        openRef.current !== null
+      ) {
+        sendChatOpen(openRef.current);
+      }
+    };
+
+    window.addEventListener("message", handleReady);
+    return () => window.removeEventListener("message", handleReady);
+  }, [sendChatOpen]);
 }
 
 /**

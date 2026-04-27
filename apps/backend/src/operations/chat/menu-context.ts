@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import database from "@/db";
 import { venue } from "@/db/schema/auth/venue";
 import { catalogItem } from "@/db/schema/catalog-item";
@@ -46,14 +46,17 @@ export async function getMenuContext(venueId: string): Promise<string> {
 }
 
 async function appendMenuTabs(lines: string[], menuId: string) {
+  // Hidden tabs are EXCLUDED from the AI's context entirely. The AI must never
+  // recommend or even mention something hidden from the public menu, so we
+  // don't ship the data to it in the first place.
   const tabs = await database
     .select()
     .from(menuTab)
-    .where(eq(menuTab.menuId, menuId))
+    .where(and(eq(menuTab.menuId, menuId), eq(menuTab.isVisible, true)))
     .orderBy(asc(menuTab.sortOrder));
 
   for (const tab of tabs) {
-    lines.push(`\n### Tab: ${tab.label}${tab.isVisible ? "" : " [nascosto]"}`);
+    lines.push(`\n### Tab: ${tab.label}`);
     await appendCategories(lines, tab.id);
   }
 }
@@ -62,13 +65,11 @@ async function appendCategories(lines: string[], tabId: string) {
   const categories = await database
     .select()
     .from(menuCategory)
-    .where(eq(menuCategory.tabId, tabId))
+    .where(and(eq(menuCategory.tabId, tabId), eq(menuCategory.isVisible, true)))
     .orderBy(asc(menuCategory.sortOrder));
 
   for (const cat of categories) {
-    lines.push(
-      `\n#### Categoria: ${cat.title} (id: ${cat.id})${cat.isVisible ? "" : " [nascosta]"}`
-    );
+    lines.push(`\n#### Categoria: ${cat.title} (id: ${cat.id})`);
     await appendEntries(lines, cat.id);
   }
 }
@@ -103,7 +104,6 @@ function formatEntryLine(entry: EntryRow): string {
       ? ` — ${(priceCents / 100).toFixed(2)}€${priceLabel ? ` ${priceLabel}` : ""}`
       : "";
   const desc = entry.catalogDescription ? ` | ${entry.catalogDescription}` : "";
-  const visibility = entry.isVisible ? "" : " [nascosto]";
   const allergens =
     entry.catalogAllergens && entry.catalogAllergens.length > 0
       ? ` | Allergeni: ${entry.catalogAllergens.join(", ")}`
@@ -113,7 +113,7 @@ function formatEntryLine(entry: EntryRow): string {
       ? ` | ${entry.catalogFeatures.join(", ")}`
       : "";
 
-  return `  - ${title} (id: ${entry.id})${priceStr}${desc}${allergens}${features}${visibility}`;
+  return `  - ${title} (id: ${entry.id})${priceStr}${desc}${allergens}${features}`;
 }
 
 async function appendEntries(lines: string[], categoryId: string) {
@@ -134,7 +134,9 @@ async function appendEntries(lines: string[], categoryId: string) {
     })
     .from(menuEntry)
     .leftJoin(catalogItem, eq(menuEntry.catalogItemId, catalogItem.id))
-    .where(eq(menuEntry.categoryId, categoryId))
+    .where(
+      and(eq(menuEntry.categoryId, categoryId), eq(menuEntry.isVisible, true))
+    )
     .orderBy(asc(menuEntry.sortOrder));
 
   for (const entry of entries) {
@@ -143,10 +145,12 @@ async function appendEntries(lines: string[], categoryId: string) {
 }
 
 async function appendPromotions(lines: string[], menuId: string) {
+  // Inactive promotions are also EXCLUDED — we don't want the AI offering deals
+  // that aren't currently live.
   const promos = await database
     .select()
     .from(promotion)
-    .where(eq(promotion.menuId, menuId))
+    .where(and(eq(promotion.menuId, menuId), eq(promotion.isActive, true)))
     .orderBy(asc(promotion.sortOrder));
 
   if (promos.length === 0) {
@@ -155,13 +159,12 @@ async function appendPromotions(lines: string[], menuId: string) {
 
   lines.push("\n\nPROMOZIONI:");
   for (const p of promos) {
-    const activeStr = p.isActive ? "" : " [disattiva]";
     const origPrice =
       p.originalPrice != null
         ? ` (originale: ${p.originalPrice.toFixed(2)}€)`
         : "";
     lines.push(
-      `  - ${p.title} (id: ${p.id}) — ${p.promoPrice.toFixed(2)}€${origPrice}${activeStr}`
+      `  - ${p.title} (id: ${p.id}) — ${p.promoPrice.toFixed(2)}€${origPrice}`
     );
     lines.push(`    ${p.shortDescription}`);
     if (p.longDescription) {

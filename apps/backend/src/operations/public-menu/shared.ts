@@ -1,3 +1,4 @@
+import type { AiWaiterSettings } from "@/operations/chat/ai-waiter-types";
 import type { MenuThemeData } from "@/types/menu-theme";
 
 interface VenueRow {
@@ -6,6 +7,7 @@ interface VenueRow {
   slug: string;
   logo: string | null;
   defaultLocale: string;
+  aiSettings: AiWaiterSettings;
 }
 
 interface MenuRow {
@@ -184,6 +186,15 @@ export function serializePublicMenu(input: SerializeInput) {
         locale: l.locale,
         isEnabled: l.isEnabled,
       })),
+      // Public-safe SUBSET of aiSettings. We deliberately do NOT ship
+      // personality, ownerInstructions, promotions, pairings, or guardrails
+      // to the public client — those are server-side only (chat backend reads
+      // them from the venue row directly). Only bgColor and questions affect
+      // the surfaces the public menu renders before the chat backend is hit.
+      aiSettings: {
+        bgColor: input.venue.aiSettings?.bgColor,
+        questions: input.venue.aiSettings?.questions,
+      },
     },
     menu: {
       id: input.menu.id,

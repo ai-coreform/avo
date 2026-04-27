@@ -59,6 +59,7 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
           height={800}
           sizes="90vw"
           src={src}
+          unoptimized
           width={800}
         />
       </div>

@@ -1,11 +1,12 @@
 import type { InferResponseType } from "hono/client";
-import { client } from "@/lib/api";
+import { publicClient } from "@/lib/api";
 
 export const $getPublicMenu =
-  client.api.public.menu[":venueSlug"][":menuSlug"].$get;
+  publicClient.api.public.menu[":venueSlug"][":menuSlug"].$get;
 export const $getTranslations =
-  client.api.public.menu[":venueSlug"][":menuSlug"].translations[":locale"]
-    .$get;
+  publicClient.api.public.menu[":venueSlug"][":menuSlug"].translations[
+    ":locale"
+  ].$get;
 
 export type GetPublicMenuResponse = InferResponseType<typeof $getPublicMenu>;
 export type PublicMenuData = GetPublicMenuResponse["data"];

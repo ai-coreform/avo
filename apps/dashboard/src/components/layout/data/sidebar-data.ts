@@ -25,10 +25,8 @@ export const sidebarData: SidebarData = {
         },
         {
           title: "Cameriere AI",
-          url: "#",
+          url: "/ai-waiter",
           icon: Bot,
-          badge: "In Arrivo",
-          disabled: true,
         },
       ],
     },
