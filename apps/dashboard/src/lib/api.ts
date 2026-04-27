@@ -62,4 +62,13 @@ export const client = hc<AppType>(API_BASE_URL, {
   fetch: throwingFetch,
 });
 
+/**
+ * Client that uses relative URLs (goes through the Next.js rewrite).
+ * Use this for public-facing pages so they work from any network device,
+ * not just localhost.
+ */
+export const publicClient = hc<AppType>("", {
+  fetch: throwingFetch,
+});
+
 export const wsClient = hc<AppType>(API_BASE_URL);

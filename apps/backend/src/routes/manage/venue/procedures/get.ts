@@ -24,6 +24,7 @@ export async function get(c: Context) {
       latitude: result.latitude,
       longitude: result.longitude,
       activeMenuId: result.activeMenuId,
+      aiSettings: result.aiSettings,
       createdAt: result.createdAt.toISOString(),
       updatedAt: result.updatedAt.toISOString(),
     },

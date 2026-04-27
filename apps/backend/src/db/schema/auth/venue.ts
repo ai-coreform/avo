@@ -7,6 +7,7 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import type { AiWaiterSettings } from "@/operations/chat/ai-waiter-types";
 
 export interface VenueSocials {
   instagramUrl?: string;
@@ -25,6 +26,13 @@ export const venue = pgTable("venue", {
   sourceLocale: text("source_locale").default("it").notNull(),
   settings: jsonb("settings")
     .$type<Record<string, unknown>>()
+    .default({})
+    .notNull(),
+
+  // AI Waiter (Cameriere AI) configuration. Empty `{}` means "use defaults" —
+  // every consumer treats every field as optional.
+  aiSettings: jsonb("ai_settings")
+    .$type<AiWaiterSettings>()
     .default({})
     .notNull(),
 

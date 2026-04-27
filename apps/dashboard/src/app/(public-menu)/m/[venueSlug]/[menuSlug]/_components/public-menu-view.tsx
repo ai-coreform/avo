@@ -25,14 +25,21 @@ export function PublicMenuView({ venueSlug, menuSlug }: PublicMenuViewProps) {
   const query = useGetPublicMenu(venueSlug, menuSlug, {
     enabled: !isPreview,
   });
-  const { themeOverride, menuOverride, tabSlugOverride } =
-    usePreviewMode(isPreview);
+  const {
+    themeOverride,
+    menuOverride,
+    tabSlugOverride,
+    chatOpenOverride,
+    aiSettingsOverride,
+  } = usePreviewMode(isPreview);
 
   // In preview mode, render as soon as we get data from postMessage
   if (isPreview) {
     if (menuOverride) {
       return (
         <MenuShell
+          aiSettingsOverride={aiSettingsOverride}
+          chatOpenOverride={chatOpenOverride}
           data={menuOverride}
           tabSlugOverride={tabSlugOverride}
           themeOverride={themeOverride}

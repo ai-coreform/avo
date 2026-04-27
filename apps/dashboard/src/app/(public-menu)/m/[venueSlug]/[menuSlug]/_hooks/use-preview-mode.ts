@@ -27,10 +27,30 @@ export interface PreviewTabChangeMessage {
   tabSlug: string;
 }
 
+export interface PreviewChatOpenMessage {
+  type: "avo-preview:chat-open";
+  open: boolean;
+}
+
+/** Live-preview payload for the AI Waiter admin page. */
+export interface AiWaiterPreviewSettings {
+  bgColor?: string;
+  questions?: string[];
+  /** Forward-compat: chat backend doesn't yet branch on personality. */
+  personality?: string;
+}
+
+export interface PreviewAiSettingsMessage {
+  type: "avo-preview:ai-settings-update";
+  settings: AiWaiterPreviewSettings;
+}
+
 export type PreviewMessage =
   | PreviewThemeMessage
   | PreviewMenuMessage
-  | PreviewTabChangeMessage;
+  | PreviewTabChangeMessage
+  | PreviewChatOpenMessage
+  | PreviewAiSettingsMessage;
 
 export function usePreviewMode(isPreview: boolean) {
   const [themeOverride, setThemeOverride] = useState<Partial<MenuTheme> | null>(
@@ -38,6 +58,11 @@ export function usePreviewMode(isPreview: boolean) {
   );
   const [menuOverride, setMenuOverride] = useState<PublicMenuData | null>(null);
   const [tabSlugOverride, setTabSlugOverride] = useState<string | null>(null);
+  const [chatOpenOverride, setChatOpenOverride] = useState<boolean | null>(
+    null
+  );
+  const [aiSettingsOverride, setAiSettingsOverride] =
+    useState<AiWaiterPreviewSettings | null>(null);
   const isPreviewRef = useRef(isPreview);
   isPreviewRef.current = isPreview;
 
@@ -61,6 +86,12 @@ export function usePreviewMode(isPreview: boolean) {
       case "avo-preview:tab-change":
         setTabSlugOverride(msg.tabSlug);
         break;
+      case "avo-preview:chat-open":
+        setChatOpenOverride(msg.open);
+        break;
+      case "avo-preview:ai-settings-update":
+        setAiSettingsOverride(msg.settings);
+        break;
       default:
         break;
     }
@@ -79,5 +110,11 @@ export function usePreviewMode(isPreview: boolean) {
     return () => window.removeEventListener("message", handleMessage);
   }, [isPreview, handleMessage]);
 
-  return { themeOverride, menuOverride, tabSlugOverride };
+  return {
+    themeOverride,
+    menuOverride,
+    tabSlugOverride,
+    chatOpenOverride,
+    aiSettingsOverride,
+  };
 }

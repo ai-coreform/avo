@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@avo/ui/components/ui/tooltip";
-import { ImageIcon, Loader2, Upload } from "lucide-react";
+import { ImageIcon, Loader2, Upload, X } from "lucide-react";
 import { type ChangeEvent, useCallback, useRef, useState } from "react";
 import { filesApi } from "@/api/files";
 import { API_BASE_URL } from "@/config/environment";
@@ -113,31 +113,44 @@ export function ImageCellUpload({
         type="file"
       />
 
-      <TooltipProvider>
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <button
-              className="group/img relative size-8 shrink-0 cursor-pointer overflow-hidden rounded-md border border-border transition-all hover:border-border focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-              disabled={disabled || isUploading}
-              onClick={() => inputRef.current?.click()}
-              type="button"
-            >
-              <ImageCellContent
-                isUploading={isUploading}
-                resolvedUrl={resolvedUrl}
-              />
-            </button>
-          </TooltipTrigger>
+      <div className="group/cell relative size-8 shrink-0">
+        <TooltipProvider>
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <button
+                className="group/img relative size-8 shrink-0 cursor-pointer overflow-hidden rounded-md border border-border transition-all hover:border-border focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                disabled={disabled || isUploading}
+                onClick={() => inputRef.current?.click()}
+                type="button"
+              >
+                <ImageCellContent
+                  isUploading={isUploading}
+                  resolvedUrl={resolvedUrl}
+                />
+              </button>
+            </TooltipTrigger>
 
-          <TooltipContent
-            className="rounded-lg bg-foreground px-2.5 py-1.5 font-sans text-primary-foreground text-xs"
-            side="bottom"
-            sideOffset={6}
+            <TooltipContent
+              className="rounded-lg bg-foreground px-2.5 py-1.5 font-sans text-primary-foreground text-xs"
+              side="bottom"
+              sideOffset={6}
+            >
+              {resolvedUrl ? "Sostituisci immagine" : "Carica immagine"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        {resolvedUrl && !isUploading && !disabled && (
+          <button
+            aria-label="Rimuovi immagine"
+            className="absolute -top-1.5 -right-1.5 z-10 flex size-4 items-center justify-center rounded-full border border-border bg-background text-muted-foreground opacity-0 shadow-sm transition-opacity hover:bg-muted hover:text-foreground group-hover/cell:opacity-100"
+            onClick={() => onChange(null)}
+            type="button"
           >
-            {resolvedUrl ? "Sostituisci immagine" : "Carica immagine"}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+            <X className="size-2.5" />
+          </button>
+        )}
+      </div>
     </>
   );
 }

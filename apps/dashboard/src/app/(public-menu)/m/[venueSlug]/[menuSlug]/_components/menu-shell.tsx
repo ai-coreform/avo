@@ -8,6 +8,7 @@ import { useMenuNavigation } from "../_hooks/use-menu-navigation";
 import { useMenuSearch } from "../_hooks/use-menu-search";
 import { MenuThemeProvider } from "../_hooks/use-menu-theme";
 import { TranslationProvider } from "../_hooks/use-translation-context";
+import type { AiWaiterPreviewSettings } from "../_hooks/use-preview-mode";
 import type { MenuTheme } from "../_utils/menu-theme";
 import {
   FONT_OPTIONS,
@@ -16,6 +17,8 @@ import {
   themeToCSS,
 } from "../_utils/menu-theme";
 import { isPromotionVisible } from "../_utils/promo-schedule-filter";
+import { AvoChatFab } from "./avo-chat-fab";
+import { AvoChatPanel } from "./avo-chat-panel";
 import { CategoryTabs } from "./category-tabs";
 import { MenuHeader } from "./menu-header";
 import { MenuItemList } from "./menu-item-list";
@@ -27,12 +30,16 @@ interface MenuShellProps {
   data: PublicMenuData;
   themeOverride?: Partial<MenuTheme> | null;
   tabSlugOverride?: string | null;
+  chatOpenOverride?: boolean | null;
+  aiSettingsOverride?: AiWaiterPreviewSettings | null;
 }
 
 export function MenuShell({
   data,
   themeOverride,
   tabSlugOverride,
+  chatOpenOverride,
+  aiSettingsOverride,
 }: MenuShellProps) {
   const baseTheme = useMemo(
     () => resolveTheme(data.menu.theme as Partial<MenuTheme>),
@@ -83,7 +90,16 @@ export function MenuShell({
 
   const search = useMenuSearch(data.menu.tabs);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(chatOpenOverride === true);
   const { headerRef, headerHeight } = useHeaderHeight();
+
+  // In preview mode the dashboard can force the chat panel open/closed so
+  // admins on the AI Waiter settings page see the chat without clicking.
+  useEffect(() => {
+    if (chatOpenOverride !== null && chatOpenOverride !== undefined) {
+      setChatOpen(chatOpenOverride);
+    }
+  }, [chatOpenOverride]);
 
   // Google Fonts links
   const fontLinks = useMemo(() => {
@@ -200,6 +216,36 @@ export function MenuShell({
             query={search.query}
             totalResults={search.results.length}
           />
+
+          {/* AVO Chat — resolution order: live-preview override > saved
+              venue.aiSettings > component default. Personality is *only*
+              piped from preview override (not from venue API) because the
+              chat backend reads it from the venue row directly; sending it
+              from here would add nothing and only matters for live preview. */}
+          {!chatOpen && (
+            <AvoChatFab
+              bgColor={
+                aiSettingsOverride?.bgColor ?? data.venue.aiSettings?.bgColor
+              }
+              onClick={() => setChatOpen(true)}
+            />
+          )}
+          {chatOpen && (
+            <AvoChatPanel
+              bgColor={
+                aiSettingsOverride?.bgColor ?? data.venue.aiSettings?.bgColor
+              }
+              locale={locale}
+              menuSlug={data.menu.slug}
+              onClose={() => setChatOpen(false)}
+              personality={aiSettingsOverride?.personality}
+              venueSlug={data.venue.slug}
+              welcomeSuggestions={
+                aiSettingsOverride?.questions ??
+                data.venue.aiSettings?.questions
+              }
+            />
+          )}
         </div>
       </MenuThemeProvider>
     </TranslationProvider>

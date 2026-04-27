@@ -1,7 +1,6 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { API_BASE_URL } from "@/config/environment";
 import { useMenuTheme } from "../_hooks/use-menu-theme";
 import { LanguageSelector } from "./language-selector";
 
@@ -18,10 +17,7 @@ function resolveLogoUrl(logo: string | null | undefined): string | null {
   if (!logo) {
     return null;
   }
-  if (logo.startsWith("http")) {
-    return logo;
-  }
-  return `${API_BASE_URL}${logo}`;
+  return logo;
 }
 
 export function MenuHeader({

@@ -37,7 +37,7 @@ function mapRow(
     description: row.description || null,
     price,
     priceLabel: row.priceLabelOverride || row.priceLabel || null,
-    imageUrl: null,
+    imageUrl: row.imageUrl ?? null,
     allergens: row.allergens as string[],
     features: row.features as string[],
     additives: row.additives as string[],
