@@ -39,21 +39,26 @@ export default function PartnersPage() {
         <p className="text-muted-foreground text-sm">Caricamento…</p>
       ) : (
         <div className="space-y-4">
-          {(data?.partners ?? []).map((p) => (
-            <PartnerCard
-              isSelected={selectedSlug === p.slug}
-              key={p.slug}
-              onToggle={() =>
-                setSelectedSlug(selectedSlug === p.slug ? null : p.slug)
-              }
-              partner={p}
-            />
-          ))}
-          {(data?.partners ?? []).length === 0 ? (
-            <p className="text-muted-foreground text-sm">
-              Nessun partner configurato.
-            </p>
-          ) : null}
+          {(() => {
+            const partners = data && "partners" in data ? data.partners : [];
+            if (partners.length === 0) {
+              return (
+                <p className="text-muted-foreground text-sm">
+                  Nessun partner configurato.
+                </p>
+              );
+            }
+            return partners.map((p) => (
+              <PartnerCard
+                isSelected={selectedSlug === p.slug}
+                key={p.slug}
+                onToggle={() =>
+                  setSelectedSlug(selectedSlug === p.slug ? null : p.slug)
+                }
+                partner={p}
+              />
+            ));
+          })()}
         </div>
       )}
     </Main>

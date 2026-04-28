@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
-    "build": "next build",
+    "build": "bun run --cwd ../backend build && next build",
     "start": "next start",
     "lint": "bun x ultracite fix",
     "test": "bun x ultracite check"
