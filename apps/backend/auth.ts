@@ -55,7 +55,6 @@ const superadminRole = adminAcControl.newRole({
 const baseUrl = process.env.BETTER_AUTH_URL ?? process.env.BASE_URL;
 const secret = process.env.BETTER_AUTH_SECRET;
 const crossSubDomainCookieDomain = process.env.BETTER_AUTH_COOKIE_DOMAIN;
-const cookiePrefix = process.env.BETTER_AUTH_COOKIE_PREFIX;
 
 export const auth = betterAuth({
   baseURL: baseUrl,
@@ -209,7 +208,6 @@ export const auth = betterAuth({
     database: {
       generateId: "uuid",
     },
-    ...(cookiePrefix ? { cookiePrefix } : {}),
     ...(crossSubDomainCookieDomain
       ? {
           crossSubDomainCookies: {

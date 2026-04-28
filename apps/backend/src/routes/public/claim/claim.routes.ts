@@ -33,7 +33,7 @@ function randomToken(length: number): string {
 /**
  * Look up the session cookie name + attributes from Better Auth's own context
  * so we always match — including the `__Secure-` prefix that auth adds when
- * baseURL is HTTPS, and any custom `BETTER_AUTH_COOKIE_PREFIX` configured.
+ * baseURL is HTTPS.
  *
  * Mirroring auth's own attributes (secure / sameSite / domain) also guarantees
  * the browser will echo the cookie back under the same conditions auth expects.

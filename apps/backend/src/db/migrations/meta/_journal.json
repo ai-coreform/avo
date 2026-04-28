@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1776469944221,
-      "tag": "0000_closed_the_executioner",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1776880000000,
-      "tag": "0001_webhook_delivery",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1777238386628,
-      "tag": "0002_bumpy_lockjaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1777296248274,
-      "tag": "0003_dusty_gorilla_man",
+      "when": 1777378369636,
+      "tag": "0000_worthless_vivisector",
       "breakpoints": true
     }
   ]

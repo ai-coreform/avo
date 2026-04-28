@@ -5,7 +5,6 @@ const envSchema = z.object({
   APPLICATION_ALLOWED_ORIGINS: z.string().optional(),
   BETTER_AUTH_URL: z.string(),
   BETTER_AUTH_COOKIE_DOMAIN: z.string().optional(),
-  BETTER_AUTH_COOKIE_PREFIX: z.string().optional(),
   BASE_URL: z.string().optional(),
   BETTER_AUTH_SECRET: z.string(),
   OPENROUTER_API_KEY: z.string().optional(),

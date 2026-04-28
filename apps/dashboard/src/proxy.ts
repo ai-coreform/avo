@@ -3,9 +3,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const DEFAULT_AUTHENTICATED_PATH = "/menu";
 const PROTECTED_PATH_PREFIXES = ["/"];
-const AUTH_COOKIE_PREFIX =
-  process.env.BETTER_AUTH_COOKIE_PREFIX ??
-  process.env.NEXT_PUBLIC_BETTER_AUTH_COOKIE_PREFIX;
 
 function isProtectedPath(pathname: string) {
   if (pathname === "/") {
@@ -51,12 +48,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isAuthenticated = Boolean(
-    getSessionCookie(
-      request,
-      AUTH_COOKIE_PREFIX ? { cookiePrefix: AUTH_COOKIE_PREFIX } : undefined
-    )
-  );
+  const isAuthenticated = Boolean(getSessionCookie(request));
 
   if (pathname === "/") {
     if (isAuthenticated) {

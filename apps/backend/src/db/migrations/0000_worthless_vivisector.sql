@@ -87,6 +87,8 @@ CREATE TABLE "venue" (
 	"default_locale" text DEFAULT 'it' NOT NULL,
 	"source_locale" text DEFAULT 'it' NOT NULL,
 	"settings" jsonb DEFAULT '{}'::jsonb NOT NULL,
+	"ai_settings" jsonb DEFAULT '{}'::jsonb NOT NULL,
+	"active_menu_id" uuid,
 	"socials" jsonb,
 	"address" text,
 	"address_line1" text,
@@ -359,6 +361,22 @@ CREATE TABLE "venue_locale" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "webhook_delivery" (
+	"id" uuid PRIMARY KEY DEFAULT pg_catalog.gen_random_uuid() NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"venue_id" uuid NOT NULL,
+	"event_type" text NOT NULL,
+	"payload" jsonb NOT NULL,
+	"status" text NOT NULL,
+	"attempts" integer DEFAULT 0 NOT NULL,
+	"next_attempt_at" timestamp DEFAULT now() NOT NULL,
+	"delivered_at" timestamp,
+	"last_status" integer,
+	"last_error" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_venue_id_venue_id_fk" FOREIGN KEY ("venue_id") REFERENCES "public"."venue"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_inviter_id_user_id_fk" FOREIGN KEY ("inviter_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -387,6 +405,8 @@ ALTER TABLE "uploaded_file" ADD CONSTRAINT "uploaded_file_venue_id_venue_id_fk" 
 ALTER TABLE "venue_link" ADD CONSTRAINT "venue_link_partner_id_partner_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partner"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "venue_link" ADD CONSTRAINT "venue_link_venue_id_venue_id_fk" FOREIGN KEY ("venue_id") REFERENCES "public"."venue"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "venue_locale" ADD CONSTRAINT "venue_locale_venue_id_venue_id_fk" FOREIGN KEY ("venue_id") REFERENCES "public"."venue"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "webhook_delivery" ADD CONSTRAINT "webhook_delivery_partner_id_partner_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partner"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "webhook_delivery" ADD CONSTRAINT "webhook_delivery_venue_id_venue_id_fk" FOREIGN KEY ("venue_id") REFERENCES "public"."venue"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "account_userId_idx" ON "account" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "invitation_venueId_idx" ON "invitation" USING btree ("venue_id");--> statement-breakpoint
 CREATE INDEX "invitation_email_idx" ON "invitation" USING btree ("email");--> statement-breakpoint
@@ -435,4 +455,7 @@ CREATE UNIQUE INDEX "venue_link_token_uniq" ON "venue_link" USING btree ("link_t
 CREATE UNIQUE INDEX "venue_link_partner_connect_venue_uniq" ON "venue_link" USING btree ("partner_id","connect_venue_id");--> statement-breakpoint
 CREATE INDEX "venue_link_status_idx" ON "venue_link" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "venue_locale_venue_id_idx" ON "venue_locale" USING btree ("venue_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "venue_locale_venue_locale_idx" ON "venue_locale" USING btree ("venue_id","locale");
+CREATE UNIQUE INDEX "venue_locale_venue_locale_idx" ON "venue_locale" USING btree ("venue_id","locale");--> statement-breakpoint
+CREATE INDEX "webhook_delivery_pending_idx" ON "webhook_delivery" USING btree ("status","next_attempt_at");--> statement-breakpoint
+CREATE INDEX "webhook_delivery_partner_venue_idx" ON "webhook_delivery" USING btree ("partner_id","venue_id");--> statement-breakpoint
+CREATE INDEX "webhook_delivery_event_type_idx" ON "webhook_delivery" USING btree ("event_type");
