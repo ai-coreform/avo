@@ -37,6 +37,7 @@
     "db:seed-lite": "bun run -b src/db/seed-lite.ts",
     "db:studio": "bunx -b drizzle-kit studio",
     "partner:seed": "bun run -b scripts/seed-partner.ts",
+    "superadmin:create": "bun run -b scripts/create-superadmin.ts",
     "db:auth-generate": "bunx --bun @better-auth/cli generate",
     "lint": "bunx ultracite fix",
     "check": "ultracite check",
