@@ -1,0 +1,17 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+watchPatterns = [
+  "apps/backend/**",
+  "packages/**",
+  "bun.lock",
+  "package.json",
+  "tsconfig.base.json",
+  "Dockerfile",
+  "railway.toml",
+]
+
+[deploy]
+startCommand = "bun run --cwd apps/backend start:railway"
+healthcheckPath = "/api/health"
+restartPolicyType = "ON_FAILURE"

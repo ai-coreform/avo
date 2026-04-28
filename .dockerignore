@@ -1,0 +1,39 @@
+# Dependencies (rebuilt in container)
+**/node_modules
+**/.bun
+
+# Build output
+**/dist
+**/.next
+**/.turbo
+**/*.tsbuildinfo
+
+# Local dev / OS / IDE
+**/.DS_Store
+**/.env
+**/.env.local
+**/.env.*.local
+.git
+.github
+.vscode
+.cursor
+.claude
+.husky
+
+# Frontend src — backend image doesn't need it (only their package.json
+# is required, copied explicitly in the Dockerfile).
+apps/admin/src
+apps/admin/public
+apps/admin/.next
+apps/dashboard/src
+apps/dashboard/public
+apps/dashboard/.next
+apps/public/src
+apps/public/public
+apps/public/.next
+
+# Misc
+docs
+README.md
+*.md
+!apps/backend/README.md

@@ -41,6 +41,7 @@
     "lint": "bun x ultracite fix",
     "check": "bun x ultracite check",
     "type-check": "bun --filter '*' type-check",
+    "typecheck": "bun run --cwd apps/backend build && bun run --cwd apps/admin tsc --noEmit && bun run --cwd apps/dashboard tsc --noEmit && bun run --cwd apps/public tsc --noEmit",
     "db:studio": "bun --filter @avo/backend db:studio",
     "db:migrate": "bun --filter @avo/backend db:migrate",
     "db:generate": "bun --filter @avo/backend db:generate",
