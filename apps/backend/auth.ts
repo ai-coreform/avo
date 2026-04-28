@@ -19,7 +19,7 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
+const appUrl = process.env.APP_URL ?? "http://localhost:3000";
 const emailFrom = process.env.RESEND_FROM_EMAIL ?? "Avo <noreply@avo.app>";
 
 const adminAcControl = createAccessControl({
@@ -87,7 +87,7 @@ export const auth = betterAuth({
           return;
         }
 
-        const inviteLink = `${frontendUrl}/inviti?id=${data.id}`;
+        const inviteLink = `${appUrl}/inviti?id=${data.id}`;
         const inviterName = data.inviter.user.name ?? "Un membro";
         const venueName = data.organization.name;
 
@@ -235,7 +235,7 @@ export const auth = betterAuth({
       // /reimposta-password page instead, which then calls the auth client.
       const urlObj = new URL(data.url);
       const token = urlObj.searchParams.get("token") ?? "";
-      const resetLink = `${frontendUrl}/reimposta-password?token=${encodeURIComponent(token)}`;
+      const resetLink = `${appUrl}/reimposta-password?token=${encodeURIComponent(token)}`;
 
       await resend.emails.send({
         from: emailFrom,
